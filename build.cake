@@ -50,7 +50,7 @@ var nextMajorRelease = $"{semVersion.Major+1}.0.0";
 var commitHash = semVersion.Sha;
 
 // Artifacts
-var artifactsDir = "./artefacts";
+var artifactsDir = "./artifacts";
 var packagesDir = artifactsDir + "/packages";
 var srcDir = "./src";
 var testsRootDir = srcDir + "/Tests";

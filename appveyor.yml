@@ -22,7 +22,7 @@ build_script:
 test: off
 
 artifacts:
-  - path: artefacts/packages/*.nupkg
+  - path: artifacts/packages/*.nupkg
     name: Nugets
 
 deploy:
