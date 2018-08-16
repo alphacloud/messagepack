@@ -129,7 +129,8 @@ Task("CreateNugetPackages")
             DotNetCorePack($"{srcDir}/{projectName}/{projectName}.csproj", new DotNetCorePackSettings {
                 Configuration = buildConfig,
                 OutputDirectory = packagesDir,
-                NoBuild = true
+                NoBuild = true,
+                ArgumentCustomization = args => args.Append($"-p:Version={nugetVersion}")
             });
         };
 
