@@ -25,7 +25,7 @@ if (string.IsNullOrEmpty(buildConfig)) {
 // Build configuration
 var local = BuildSystem.IsLocalBuild;
 var isPullRequest = AppVeyor.Environment.PullRequest.IsPullRequest;
-var isRepository = StringComparer.OrdinalIgnoreCase.Equals("alphacloud/messagepack-mvc", AppVeyor.Environment.Repository.Name);
+var isRepository = StringComparer.OrdinalIgnoreCase.Equals("alphacloud/messagepack", AppVeyor.Environment.Repository.Name);
 
 var isDebugBuild = string.Equals(buildConfig, "Debug", StringComparison.OrdinalIgnoreCase);
 var isReleaseBuild = string.Equals(buildConfig, "Release", StringComparison.OrdinalIgnoreCase);
@@ -38,7 +38,7 @@ var appVeyorJobId = AppVeyor.Environment.JobId;
 // Solution settings
 // Nuget packages to build
 var nugetPackages = new [] {
-    "Alphacloud.MessagePack.AspNetCore"
+    "Alphacloud.MessagePack.AspNetCore.Formatters"
 };
 
 // Calculate version and commit hash
@@ -54,7 +54,7 @@ var artifactsDir = "./artifacts";
 var packagesDir = artifactsDir + "/packages";
 var srcDir = "./src";
 var testsRootDir = srcDir + "/Tests";
-var solutionFile = srcDir + "/Alphacloud.MessagePack.Mvc.sln";
+var solutionFile = srcDir + "/Alphacloud.MessagePack.sln";
 var samplesDir = "./samples";
 
 // SETUP / TEARDOWN
@@ -126,7 +126,7 @@ Task("CreateNugetPackages")
     .Does(() => {
         Action<string> buildPackage = (string projectName) => {
 
-            DotNetCorePack($"{srcDir}/{projectName}/{projectName}.csproj", new DotNetCorePackSettings {
+            DotNetCorePack($"{srcDir}/lib/{projectName}/{projectName}.csproj", new DotNetCorePackSettings {
                 Configuration = buildConfig,
                 OutputDirectory = packagesDir,
                 NoBuild = true,

@@ -1,4 +1,6 @@
-﻿namespace MessagePack.AspNetCoreMvcFormatter
+﻿using MessagePack;
+
+namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
     /// <summary>
     ///     MessagePack MVC formatter options.

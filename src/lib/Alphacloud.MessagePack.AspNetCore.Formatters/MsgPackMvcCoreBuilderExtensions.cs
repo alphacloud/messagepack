@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace MessagePack.AspNetCoreMvcFormatter
+namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
     /// <summary>
     ///     MVC congiguration helper.
@@ -22,7 +22,7 @@ namespace MessagePack.AspNetCoreMvcFormatter
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             var options = new MessagePackFormatterOptions
             {
-                FormatterResolver = ContractlessStandardResolverAllowPrivate.Instance
+                FormatterResolver = ContractlessStandardResolver.Instance
             };
 
             setup?.Invoke(options);

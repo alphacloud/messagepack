@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
+using MessagePack;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-namespace MessagePack.AspNetCoreMvcFormatter
+namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
     /// <summary>
     ///     MVC Input formatter.

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace MessagePack.AspNetCoreMvcFormatter
+namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
     /// <summary>
     ///     Formatting options setup.

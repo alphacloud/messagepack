@@ -39,7 +39,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\common\AssemblyVersion.cs" Link="AssemblyVersion.cs" />
+    <Compile Include="..\..\common\AssemblyVersion.cs" Link="AssemblyVersion.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
