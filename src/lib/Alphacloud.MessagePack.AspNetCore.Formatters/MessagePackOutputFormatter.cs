@@ -1,31 +1,35 @@
-﻿using System.Threading.Tasks;
-using MessagePack;
-using Microsoft.AspNetCore.Mvc.Formatters;
-
-namespace Alphacloud.MessagePack.AspNetCore.Formatters
+﻿namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using global::MessagePack;
+    using JetBrains.Annotations;
+    using Microsoft.AspNetCore.Mvc.Formatters;
+
+
     /// <summary>
     ///     MVC output formatter.
     /// </summary>
     public class MessagePackOutputFormatter : OutputFormatter
     {
+        readonly IFormatterResolver _resolver;
+
         /// <summary>
-        ///     Supported media type.
+        ///     Constructor.
         /// </summary>
-        public const string ContentType = "application/x-msgpack";
-
-        private readonly IFormatterResolver _resolver;
-
-        /// <inheritdoc />
-        public MessagePackOutputFormatter()
-            : this(null)
+        /// <param name="resolver">Contract resolver.</param>
+        /// <param name="mediaTypes">Supported media types.</param>
+        public MessagePackOutputFormatter([NotNull] IFormatterResolver resolver, ICollection<string> mediaTypes)
         {
-        }
+            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
+            if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
 
-        public MessagePackOutputFormatter(IFormatterResolver resolver)
-        {
-            _resolver = resolver ?? MessagePackSerializer.DefaultResolver;
-            SupportedMediaTypes.Add(ContentType);
+            foreach (var mediaType in mediaTypes)
+            {
+                SupportedMediaTypes.Add(mediaType);
+            }
         }
 
         /// <inheritdoc />
@@ -36,16 +40,17 @@ namespace Alphacloud.MessagePack.AspNetCore.Formatters
                 if (context.Object == null)
                 {
                     context.HttpContext.Response.Body.WriteByte(MessagePackCode.Nil);
-                    return Task.CompletedTask;
                 }
-
-                // use concrete type.
-                MessagePackSerializer.NonGeneric.Serialize(context.Object.GetType(),
-                    context.HttpContext.Response.Body, context.Object, _resolver);
-                return Task.CompletedTask;
+                else
+                {
+                    // infer type from the instance
+                    MessagePackSerializer.NonGeneric.Serialize(context.Object.GetType(),
+                        context.HttpContext.Response.Body, context.Object, _resolver);
+                }
             }
+            else
+                MessagePackSerializer.NonGeneric.Serialize(context.ObjectType, context.HttpContext.Response.Body, context.Object, _resolver);
 
-            MessagePackSerializer.NonGeneric.Serialize(context.ObjectType, context.HttpContext.Response.Body, context.Object, _resolver);
             return Task.CompletedTask;
         }
     }

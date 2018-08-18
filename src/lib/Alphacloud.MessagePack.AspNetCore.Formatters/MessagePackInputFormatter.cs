@@ -1,27 +1,32 @@
-﻿using System.Threading.Tasks;
-using MessagePack;
-using Microsoft.AspNetCore.Mvc.Formatters;
-
-namespace Alphacloud.MessagePack.AspNetCore.Formatters
+﻿namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using global::MessagePack;
+    using JetBrains.Annotations;
+    using Microsoft.AspNetCore.Mvc.Formatters;
+
+
     /// <summary>
     ///     MVC Input formatter.
     /// </summary>
+    [PublicAPI]
     public class MessagePackInputFormatter : InputFormatter
     {
-        private readonly IFormatterResolver _resolver;
+        readonly IFormatterResolver _resolver;
 
         /// <inheritdoc />
-        public MessagePackInputFormatter()
-            : this(null)
+        public MessagePackInputFormatter([NotNull] IFormatterResolver resolver, [NotNull] ICollection<string> mediaTypes)
         {
-        }
+            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
+            if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
 
-        /// <inheritdoc />
-        public MessagePackInputFormatter(IFormatterResolver resolver)
-        {
-            _resolver = resolver ?? MessagePackSerializer.DefaultResolver;
-            SupportedMediaTypes.Add(MessagePackOutputFormatter.ContentType);
+            foreach (var mediaType in mediaTypes)
+            {
+                SupportedMediaTypes.Add(mediaType);
+            }
         }
 
         /// <inheritdoc />
