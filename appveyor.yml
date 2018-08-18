@@ -1,0 +1,37 @@
+version: .{build}
+clone_folder: c:\work\messagepack-mvc
+
+pull_requests:
+  do_not_increment_build_number: true
+
+nuget:
+  disable_publish_on_pr: true
+
+os: Visual Studio 2017
+
+environment:
+  CAKE_SETTINGS_SKIPVERIFICATION: true
+
+cache:
+  - c:\tmp\cake\tools -> appveor.yml
+
+build_script:
+# skip BuildSamples for now..
+  - ps: ./build.ps1
+
+test: off
+
+artifacts:
+  - path: artifacts/packages/*.nupkg
+    name: Nugets
+
+deploy:
+  - provider: NuGet
+    api_key:
+      secure: GhGzYN5/LaDMZdwRi+rbwcG20q3pqhoRmwsVGwRD2sXzsr+xaH6p34OcPsGcn3JP
+    on:
+      branch:
+        - develop
+        - /release\/v.*/
+        - /releases.*/
+        - /hotfixes.*/

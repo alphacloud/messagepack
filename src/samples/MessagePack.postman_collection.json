@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "a928c5f2-6621-4251-89e9-8e59c97f9681",
+		"name": "MessagePack",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "MsgPack",
+			"item": [
+				{
+					"name": "Get Single model",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/x-msgpack",
+								"description": "MessagePack format"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:49845/api/values/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "49845",
+							"path": [
+								"api",
+								"values",
+								"1"
+							]
+						},
+						"description": "Get values as Json"
+					},
+					"response": []
+				},
+				{
+					"name": "Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/x-msgpack"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-msgpack"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {}
+						},
+						"url": {
+							"raw": "http://localhost:49845/api/values",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "49845",
+							"path": [
+								"api",
+								"values"
+							]
+						},
+						"description": "Post data in MessagePack format"
+					},
+					"response": []
+				},
+				{
+					"name": "Get multiple",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/x-msgpack",
+								"description": "MessagePack format"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:49845/api/values",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "49845",
+							"path": [
+								"api",
+								"values"
+							]
+						},
+						"description": "Get values as Json"
+					},
+					"response": [
+						{
+							"name": "sample MessagePack payload",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/x-msgpack",
+										"description": "MessagePack format",
+										"disabled": false
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:49845/api/values",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "49845",
+									"path": [
+										"api",
+										"values"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "raw",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/x-msgpack",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 18 Aug 2018 20:35:16 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								}
+							],
+							"cookie": [],
+							"body": "���Id\u0001�Value�Value: 1��Id\u0002�Value�Value: 2"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Json",
+			"item": [
+				{
+					"name": "Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 3,\n  \"value\": \"new value: 3\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:49845/api/values",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "49845",
+							"path": [
+								"api",
+								"values"
+							]
+						},
+						"description": "Post Json"
+					},
+					"response": []
+				},
+				{
+					"name": "Get multiple",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:49845/api/values",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "49845",
+							"path": [
+								"api",
+								"values"
+							]
+						},
+						"description": "Get values as Json"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
