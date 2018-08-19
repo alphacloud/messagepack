@@ -1,4 +1,12 @@
-branches: {}
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatchTag
+mode: ContinuousDelivery
+branches:
+  release:
+    mode: ContinuousDeployment
+    tag: rc
+  develop:
+    mode: ContinuousDeployment
+    tag: alpha
 ignore:
   sha: []
-tag-prefix: 'release/'
