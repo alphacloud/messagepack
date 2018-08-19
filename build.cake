@@ -83,7 +83,7 @@ Setup((context) =>
     CreateDirectory(artifactsDir);
     CleanDirectory(artifactsDir);
     githubCredentials = new Credentials(
-      context.EnvironmentVariable("GITHUB_USERNAME"),
+      context.EnvironmentVariable("GITHUB_USER"),
       context.EnvironmentVariable("GITHUB_PASSWORD")
     );
 });
