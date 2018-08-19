@@ -1,4 +1,4 @@
 branches: {}
 ignore:
   sha: []
-tag-prefix: '[vV]'
+tag-prefix: 'release/'
