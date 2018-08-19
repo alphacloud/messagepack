@@ -1,6 +1,4 @@
-# assembly-versioning-scheme: MajorMinorPatch
-# assembly-file-versioning-scheme: MajorMinorPatchTag
-mode: ContinuousDelivery
+assembly-file-versioning-scheme: MajorMinorPatch
 branches:
   release:
     mode: ContinuousDeployment
@@ -10,3 +8,4 @@ branches:
     tag: alpha
 ignore:
   sha: []
+
