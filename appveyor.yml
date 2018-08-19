@@ -20,7 +20,7 @@ cache:
   - c:\tmp\cake\tools -> appveor.yml
 
 build_script:
-  - ps: ./build.ps1
+  - ps: ./build.ps1 -verbosity verbose
 
 test: off
 
