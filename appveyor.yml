@@ -16,12 +16,11 @@ environment:
   GITHUB_PASSWORD:
     secure: 9gArAAMTQRHIsSZcJ+87GM+kaSfsBlouuFHtBR1hWBY=
 
-cache:
-  - c:\tmp\cake\tools -> appveor.yml
+#cache:
+#  - c:\tmp\cake\tools -> appveor.yml
 
 build_script:
-# skip BuildSamples for now..
-  - ps: ./build.ps1
+  - ps: ./build.ps1 -verbosity diagnostic
 
 test: off
 

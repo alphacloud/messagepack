@@ -6,7 +6,8 @@
 
 // TOOLS
 #tool "GitReleaseManager"
-#tool "GitVersion.CommandLine"
+// #tool "GitVersion.CommandLine"
+#tool "nuget:?package=GitVersion.CommandLine&prerelease"
 
 // ARGUMENTS
 var target = Argument("target", "Default");
@@ -33,8 +34,8 @@ var isDebugBuild = string.Equals(buildConfig, "Debug", StringComparison.OrdinalI
 var isReleaseBuild = string.Equals(buildConfig, "Release", StringComparison.OrdinalIgnoreCase);
 
 var isDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", AppVeyor.Environment.Repository.Branch);
-var isReleaseBranch = AppVeyor.Environment.Repository.Branch.IndexOf("releases/", StringComparison.OrdinalIgnoreCase) > 0
-    || AppVeyor.Environment.Repository.Branch.IndexOf("hotfixes/", StringComparison.OrdinalIgnoreCase) > 0;
+var isReleaseBranch = AppVeyor.Environment.Repository.Branch.IndexOf("releases/", StringComparison.OrdinalIgnoreCase) >= 0
+    || AppVeyor.Environment.Repository.Branch.IndexOf("hotfixes/", StringComparison.OrdinalIgnoreCase) >= 0;
 
 var isTagged = AppVeyor.Environment.Repository.Tag.IsTag;
 var appVeyorJobId = AppVeyor.Environment.JobId;
@@ -52,6 +53,7 @@ var buildVersion = semVersion.FullBuildMetaData;
 var informationalVersion = semVersion.InformationalVersion;
 var nextMajorRelease = $"{semVersion.Major+1}.0.0";
 var commitHash = semVersion.Sha;
+var milestone = semVersion.MajorMinorPatch;
 
 // Artifacts
 var artifactsDir = "./artifacts";
@@ -82,7 +84,7 @@ Setup((context) =>
     CreateDirectory(artifactsDir);
     CleanDirectory(artifactsDir);
     githubCredentials = new Credentials(
-      context.EnvironmentVariable("GITHUB_USERNAME"),
+      context.EnvironmentVariable("GITHUB_USER"),
       context.EnvironmentVariable("GITHUB_PASSWORD")
     );
 });
@@ -165,7 +167,7 @@ Task("CreateRelease")
     .Does(() => {
         GitReleaseManagerCreate(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName,
             new GitReleaseManagerCreateSettings {
-              Milestone = nugetVersion,
+              Milestone = milestone,
               TargetCommitish = "master"
         });
     });
@@ -173,7 +175,7 @@ Task("CreateRelease")
 Task("CloseMilestone")
     .WithCriteria(() => isRepository && isTagged && !isPullRequest)
     .Does(() => {
-        GitReleaseManagerClose(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName, nugetVersion);
+        GitReleaseManagerClose(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName, milestone);
     });
 
 Task("Default")
