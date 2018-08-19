@@ -1,4 +1,4 @@
-assembly-versioning-scheme: MajorMinorPatch
+# assembly-versioning-scheme: MajorMinorPatch
 # assembly-file-versioning-scheme: MajorMinorPatchTag
 mode: ContinuousDelivery
 branches:
