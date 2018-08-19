@@ -6,7 +6,8 @@
 
 // TOOLS
 #tool "GitReleaseManager"
-#tool "GitVersion.CommandLine"
+// #tool "GitVersion.CommandLine"
+#tool "nuget:?package=GitVersion.CommandLine&prerelease"
 
 // ARGUMENTS
 var target = Argument("target", "Default");
