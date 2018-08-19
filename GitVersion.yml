@@ -1,4 +1,4 @@
-assembly-file-versioning-scheme: MajorMinorPatch
+# assembly-file-versioning-scheme: MajorMinorPatch
 branches:
   release:
     mode: ContinuousDeployment
