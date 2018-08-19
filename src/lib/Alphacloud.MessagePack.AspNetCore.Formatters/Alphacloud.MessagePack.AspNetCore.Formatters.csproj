@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Build">
+    <TargetFrameworks>netstandard1.6;netstandard2.0;</TargetFrameworks>
+    <SignAssembly>True</SignAssembly>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <DebugSymbols>True</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/alphacloud/messagepack-mvc</RepositoryUrl>
+    <PackageLicenseUrl>http://mit-license.org/</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>message-pack mvc-core alphacloud</PackageTags>
+    <PackageReleaseNotes>Initial revision</PackageReleaseNotes>
+    <Authors>shatl</Authors>
+    <Company>Alphacloud</Company>
+    <Description>MessagePack formatters for ASP.NET Core MVC</Description>
+    <Copyright>(c) Alphacloud</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Label="SourceLink">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\common\AssemblyVersion.cs" Link="AssemblyVersion.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[1.1.2, 2.0.0)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[1.1.2, 2.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[2.0.0, 3.0.0)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.0.0, 3.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup Label="Package References">
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
+    <PackageReference Include="MessagePack" Version="[1.7.3.4, 2.0.0)" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63102-01" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>
