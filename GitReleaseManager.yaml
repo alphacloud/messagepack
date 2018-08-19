@@ -1,7 +1,7 @@
 create:
   include-footer: true
   footer-heading: Where to get it
-  footer-content: You can download this release from [GitHub](https://github.com/alphacloud/messagepac/releases/{milestone}
+  footer-content: You can download this release from [GitHub](https://github.com/alphacloud/messagepack/releases/{milestone}
   footer-includes-milestone: true
   milestone-replace-text: '{milestone}'
 # export:
@@ -10,15 +10,15 @@ create:
 #   perform-regex-removal: true | false
 #   regex-text: '### Where to get it(\r\n)*You can .*\)'
 #   multiline-regex: true | false
-# issue-labels-include:
-# - Bug
-# - Duplicate
-# - Enhancement
-# - Feature
-# - Help Wanted
-# - Improvement
-# - Invalid
-# - Question
-# - WontFix
-# issue-labels-exclude:
-# - Internal Refactoring
+issue-labels-include:
+- bug
+- duplicate
+- enhancement
+- feature
+- help-wanted
+- improvement
+- invalid
+- question
+- wontfix
+issue-labels-exclude:
+- internal-refactoring

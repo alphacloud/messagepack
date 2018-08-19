@@ -3,8 +3,6 @@
 #addin "Cake.Incubator"
 #addin "Cake.Issues"
 #addin nuget:?package=Cake.AppVeyor
-#addin nuget:?package=Refit&version=3.0.0
-#addin nuget:?package=Newtonsoft.Json&version=11.0.1
 
 // TOOLS
 #tool "GitReleaseManager"
@@ -23,15 +21,21 @@ if (string.IsNullOrEmpty(buildConfig)) {
 }
 
 // Build configuration
+
+var repoOwner = "alphacloud";
+var repoName = "messagepack";
+
 var local = BuildSystem.IsLocalBuild;
 var isPullRequest = AppVeyor.Environment.PullRequest.IsPullRequest;
-var isRepository = StringComparer.OrdinalIgnoreCase.Equals("alphacloud/messagepack", AppVeyor.Environment.Repository.Name);
+var isRepository = StringComparer.OrdinalIgnoreCase.Equals($"{repoOwner}/{repoName}", AppVeyor.Environment.Repository.Name);
 
 var isDebugBuild = string.Equals(buildConfig, "Debug", StringComparison.OrdinalIgnoreCase);
 var isReleaseBuild = string.Equals(buildConfig, "Release", StringComparison.OrdinalIgnoreCase);
 
 var isDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", AppVeyor.Environment.Repository.Branch);
-var isReleaseBranch = StringComparer.OrdinalIgnoreCase.Equals("master", AppVeyor.Environment.Repository.Branch);
+var isReleaseBranch = AppVeyor.Environment.Repository.Branch.IndexOf("releases/", StringComparison.OrdinalIgnoreCase) > 0
+    || AppVeyor.Environment.Repository.Branch.IndexOf("hotfixes/", StringComparison.OrdinalIgnoreCase) > 0;
+
 var isTagged = AppVeyor.Environment.Repository.Tag.IsTag;
 var appVeyorJobId = AppVeyor.Environment.JobId;
 
@@ -57,13 +61,30 @@ var testsRootDir = srcDir + "/Tests";
 var solutionFile = srcDir + "/Alphacloud.MessagePack.sln";
 var samplesDir = "./samples";
 
+Credentials githubCredentials = null;
+
+public class Credentials {
+    public string UserName { get; set; }
+    public string Password { get; set; }
+
+    public Credentials(string userName, string password) {
+        UserName = userName;
+        Password = password;
+    }
+}
+
+
 // SETUP / TEARDOWN
 
 Setup((context) =>
 {
-    Information("Building version {0} (isTagged: {1}, isLocal: {2})...", nugetVersion, isTagged, local);
+    Information("Building version {0} (tagged: {1}, local: {2}, release branch: {3})...", nugetVersion, isTagged, local, isReleaseBranch);
     CreateDirectory(artifactsDir);
     CleanDirectory(artifactsDir);
+    githubCredentials = new Credentials(
+      context.EnvironmentVariable("GITHUB_USERNAME"),
+      context.EnvironmentVariable("GITHUB_PASSWORD")
+    );
 });
 
 Teardown((context) =>
@@ -139,11 +160,28 @@ Task("CreateNugetPackages")
         };
     });
 
+Task("CreateRelease")
+    .WithCriteria(() => isRepository && isReleaseBranch && !isPullRequest)
+    .Does(() => {
+        GitReleaseManagerCreate(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName,
+            new GitReleaseManagerCreateSettings {
+              Milestone = nugetVersion,
+              TargetCommitish = "master"
+        });
+    });
+
+Task("CloseMilestone")
+    .WithCriteria(() => isRepository && isTagged && !isPullRequest)
+    .Does(() => {
+        GitReleaseManagerClose(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName, nugetVersion);
+    });
 
 Task("Default")
     .IsDependentOn("UpdateAppVeyorBuildNumber")
     .IsDependentOn("Build")
     .IsDependentOn("CreateNugetPackages")
+    .IsDependentOn("CreateRelease")
+    .IsDependentOn("CloseMilestone")
     .Does(
         () => {}
     );

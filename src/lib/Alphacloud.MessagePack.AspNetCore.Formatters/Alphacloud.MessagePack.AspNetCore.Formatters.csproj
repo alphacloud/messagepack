@@ -43,13 +43,13 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[1.1.2, 2.0.0)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[1.1.2, 2.0.0)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[2.0.0, 3.0.0)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.0.0, 3.0.0)" />
   </ItemGroup>
 
   <ItemGroup Label="Package References">
