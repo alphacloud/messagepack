@@ -1,5 +1,5 @@
 version: .{build}
-clone_folder: c:\work\messagepack-mvc
+clone_folder: c:\work\messagepack
 
 pull_requests:
   do_not_increment_build_number: true
@@ -11,6 +11,10 @@ os: Visual Studio 2017
 
 environment:
   CAKE_SETTINGS_SKIPVERIFICATION: true
+  GITHUB_USER:
+    secure: 5NfHPjw31vB/XxJqwpHp3cl3n/9F7PTUVXhMIqRSDJE=
+  GITHUB_PASSWORD:
+    secure: 9gArAAMTQRHIsSZcJ+87GM+kaSfsBlouuFHtBR1hWBY=
 
 cache:
   - c:\tmp\cake\tools -> appveor.yml
