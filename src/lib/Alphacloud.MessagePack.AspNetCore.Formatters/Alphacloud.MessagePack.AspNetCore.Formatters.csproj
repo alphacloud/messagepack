@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Build">
-    <TargetFrameworks>netstandard1.6;netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;netstandard2.0;netcoreapp2.2</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
@@ -21,11 +21,11 @@
 
   <PropertyGroup>
     <RepositoryUrl>https://github.com/alphacloud/messagepack-mvc</RepositoryUrl>
-    <PackageLicenseUrl>http://mit-license.org/</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>message-pack mvc-core alphacloud</PackageTags>
-    <PackageReleaseNotes>Initial revision</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/alphacloud/messagepack/releases/tag/0.1.0</PackageReleaseNotes>
     <Authors>shatl</Authors>
     <Company>Alphacloud</Company>
     <Description>MessagePack formatters for ASP.NET Core MVC</Description>
@@ -52,10 +52,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.0.0, 3.0.0)" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[2.2.0, 3.0.0)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.2.0, 3.0.0)" />
+  </ItemGroup>
+
   <ItemGroup Label="Package References">
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" PrivateAssets="All" />
     <PackageReference Include="MessagePack" Version="[1.7.3.4, 2.0.0)" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63102-01" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
