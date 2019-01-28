@@ -241,7 +241,7 @@ Task("Build")
 Task("CreateNugetPackages")
     .Does(() => {
         Action<string> buildPackage = (string projectName) => {
-          var projectFileName = $"{srcDir}/{projectName}/{projectName}.csproj";
+          var projectFileName = $"{srcDir}/lib/{projectName}/{projectName}.csproj";
           
           if (isTagged) {
             var releaseNotes = $"https://github.com/alphacloud/messagepack/releases/tag/{milestone}";
