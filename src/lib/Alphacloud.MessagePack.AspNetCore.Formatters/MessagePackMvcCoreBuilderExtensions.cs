@@ -28,13 +28,11 @@
 
         internal static void AddMessagePack(this IServiceCollection services, Action<MessagePackFormatterOptions> setup)
         {
-            var options = new MessagePackFormatterOptions
+            services.Configure<MessagePackFormatterOptions>(o =>
             {
-                FormatterResolver = ContractlessStandardResolver.Instance
-            };
-
-            setup?.Invoke(options);
-            services.Add(ServiceDescriptor.Singleton(options));
+                if (o.FormatterResolver == null) o.FormatterResolver = ContractlessStandardResolver.Instance;
+                setup?.Invoke(o);
+            });
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, MessagePackFormatterMvcOptionsSetup>());
         }

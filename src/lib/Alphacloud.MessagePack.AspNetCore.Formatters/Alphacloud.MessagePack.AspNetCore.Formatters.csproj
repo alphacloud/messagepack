@@ -19,7 +19,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Label="Package">
     <RepositoryUrl>https://github.com/alphacloud/messagepack-mvc</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>

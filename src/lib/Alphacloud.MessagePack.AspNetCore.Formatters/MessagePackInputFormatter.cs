@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading.Tasks;
     using global::MessagePack;
     using JetBrains.Annotations;
@@ -35,6 +36,13 @@
             var request = context.HttpContext.Request;
             var result = MessagePackSerializer.NonGeneric.Deserialize(context.ModelType, request.Body, _resolver);
             return InputFormatterResult.SuccessAsync(result);
+        }
+
+        /// <inheritdoc />
+        protected override bool CanReadType(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            return !typeInfo.IsAbstract;
         }
     }
 }

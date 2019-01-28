@@ -83,7 +83,9 @@ Default configuration can be changed by providing callback to `AddMessagePackFor
 
 Available settings:
 * `MediaTypes` - allows to specify additional media handled by MessagePack formatters. Default is `application/x-msgpack`.
-* `FormatterResolver` - allows to customize serialization, see https://github.com/neuecc/MessagePack-CSharp/blob/master/README.md#object-serialization for details.
+* `FormatterResolver` - allows to customize serialization, see [MsgPack object serialization](https://github.com/neuecc/MessagePack-CSharp/blob/master/README.md#object-serialization) for details.
+* `FileExtensions` - allows to specify reponse format URL mapping. Default is `msgpack`. See sample project or
+[Microsoft Docs](https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-2.2#response-format-url-mappings) for more information.
 
 ```
 services.AddMvc()
@@ -91,6 +93,7 @@ services.AddMvc()
   {
       opt.MediaTypes.Clear();
       opt.MediaTypes.Add("application/x-messagepack");
+      opt.FileExtensions.Add("messagepack");
       opt.FormatterResolver = MessagePack.Resolvers.ContractlessStandardResolverAllowPrivate.Instance;
   })
 
@@ -100,7 +103,7 @@ services.AddMvc()
 # Samples
 
 Sample application is located at `src/samples/NetCoreWebApi`.
-Sample requests can be found at `src/samples/MessagePack.postman_collection.json`. To post MessagePack content, load use `SingleModel.msgpack` located under `src/samples`.
+Sample Postman requests can be found at `src/samples/MessagePack.postman_collection.json`. To post MessagePack content, load use `SingleModel.msgpack` located under `src/samples`.
 
 
 # References
@@ -112,3 +115,4 @@ Sample requests can be found at `src/samples/MessagePack.postman_collection.json
   * https://offering.solutions/blog/articles/2017/02/07/difference-between-addmvc-addmvcore/
 * Content negotiation in ASP.NET Core MVC https://code-maze.com/content-negotiation-dotnet-core/
 * Source Link - https://github.com/ctaggart/SourceLink
+* Postman https://www.getpostman.com/downloads/
