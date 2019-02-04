@@ -1,4 +1,5 @@
 // ADDINS
+#addin "Cake.Coveralls"
 #addin "Cake.FileHelpers"
 #addin "Cake.Incubator"
 #addin "Cake.Issues"
@@ -6,8 +7,10 @@
 
 // TOOLS
 #tool "GitReleaseManager"
-// #tool "GitVersion.CommandLine"
-#tool "nuget:?package=GitVersion.CommandLine&prerelease"
+#tool "GitVersion.CommandLine"
+#tool "coveralls.io"
+#tool "OpenCover"
+#tool "ReportGenerator"
 
 // ARGUMENTS
 var target = Argument("target", "Default");
@@ -43,7 +46,8 @@ var appVeyorJobId = AppVeyor.Environment.JobId;
 // Solution settings
 // Nuget packages to build
 var nugetPackages = new [] {
-    "Alphacloud.MessagePack.AspNetCore.Formatters"
+    "Alphacloud.MessagePack.AspNetCore.Formatters",
+    "Alphacloud.MessagePack.HttpFormatter"
 };
 
 // Calculate version and commit hash
@@ -57,9 +61,14 @@ var milestone = semVersion.MajorMinorPatch;
 
 // Artifacts
 var artifactsDir = "./artifacts";
+var artifactsDirAbsolutePath = MakeAbsolute(Directory(artifactsDir));
+
+var testCoverageOutputFile = artifactsDir + "/OpenCover.xml";
+var codeCoverageReportDir = artifactsDir + "/CodeCoverageReport";
+
 var packagesDir = artifactsDir + "/packages";
 var srcDir = "./src";
-var testsRootDir = srcDir + "/Tests";
+var testsRootDir = srcDir + "/tests";
 var solutionFile = srcDir + "/Alphacloud.MessagePack.sln";
 var samplesDir = "./samples";
 
@@ -113,14 +122,6 @@ Task("UpdateAppVeyorBuildNumber")
 
     }).ReportError(exception =>
     {
-        // When a build starts, the initial identifier is an auto-incremented value supplied by AppVeyor.
-        // As part of the build script, this version in AppVeyor is changed to be the version obtained from
-        // GitVersion. This identifier is purely cosmetic and is used by the core team to correlate a build
-        // with the pull-request. In some circumstances, such as restarting a failed/cancelled build the
-        // identifier in AppVeyor will be already updated and default behaviour is to throw an
-        // exception/cancel the build when in fact it is safe to swallow.
-        // See https://github.com/reactiveui/ReactiveUI/issues/1262
-
         Warning("Build with version {0} already exists.", buildVersion);
     });
 
@@ -132,12 +133,105 @@ Task("Restore")
     });
 
 
+Task("RunXunitTests")
+    .DoesForEach(GetFiles($"{testsRootDir}/**/*.csproj"), 
+    (testProj) => {
+        var projectPath = testProj.GetDirectory();
+        var projectFilename = testProj.GetFilenameWithoutExtension();
+        Information("Calculating code coverage for {0} ...", projectFilename);
+
+        var openCoverSettings = new OpenCoverSettings {
+            OldStyle = true,
+            ReturnTargetCodeOffset = 0,
+            ArgumentCustomization = args => args.Append("-mergeoutput").Append("-hideskipped:File;Filter;Attribute"),
+            WorkingDirectory = projectPath,
+        }
+        .WithFilter("+[Alphacloud.MessagePack.AspNetCore.Formatters]* -[Tests*]*")
+        .ExcludeByAttribute("*.ExcludeFromCodeCoverage*")
+        .ExcludeByFile("*/*Designer.cs");
+
+        Func<string,ProcessArgumentBuilder> buildProcessArgs = (buildCfg) =>
+            new ProcessArgumentBuilder()
+                    .AppendSwitch("--configuration", buildCfg)
+                    .AppendSwitch("--filter", "Category!=IntegrationTests")
+                    .AppendSwitch("--results-directory", artifactsDirAbsolutePath.FullPath)
+                    .AppendSwitch("--logger", $"trx;LogFileName={projectFilename}.trx")
+                    .Append("--no-build");
+
+        // run open cover for debug build configuration
+        OpenCover(
+            tool => tool.DotNetCoreTool(projectPath.ToString(),
+                "test",
+                buildProcessArgs("Debug")
+            ),
+            testCoverageOutputFile,
+            openCoverSettings);
+
+        // run tests again if Release mode was requested
+        if (isReleaseBuild) {
+            Information("Running Release mode tests for {0}", projectFilename.ToString());
+            DotNetCoreTool(testProj.FullPath,
+                "test",
+                buildProcessArgs("Release")
+            );
+        }
+    })
+    .DeferOnError();
+
+Task("CleanPreviousTestResults")
+    .Does(() =>
+    {
+        if (FileExists(testCoverageOutputFile))
+            DeleteFile(testCoverageOutputFile);
+        DeleteFiles(artifactsDir + "/*.trx");
+        if (DirectoryExists(codeCoverageReportDir))
+            DeleteDirectory(codeCoverageReportDir, recursive: true);
+    });
+
+Task("GenerateCoverageReport")
+    .WithCriteria(() => local)
+    .Does(() =>
+    {
+        ReportGenerator(testCoverageOutputFile, codeCoverageReportDir);
+    });
+
+
+Task("RunUnitTests")
+    .IsDependentOn("Build")
+    .IsDependentOn("CleanPreviousTestResults")
+    .IsDependentOn("RunXunitTests")
+    .IsDependentOn("GenerateCoverageReport")
+    .Does(() =>
+    {
+        Information("Done Test");
+    })
+    .Finally(() => {
+        if (!local) {
+            CoverallsIo(testCoverageOutputFile);
+
+            foreach(var trxFile in GetFiles($"{artifactsDir}/*.trx"))
+            {
+                Information("Uploading unit-test results: {0}", trxFile);
+                UploadFile("https://ci.appveyor.com/api/testresults/mstest/" + appVeyorJobId, trxFile);
+            }
+        }
+    });
+
 Task("Build")
     .IsDependentOn("SetVersion")
     .IsDependentOn("UpdateAppVeyorBuildNumber")
     .IsDependentOn("Restore")
     .Does(() =>
     {
+        if (isReleaseBuild) {
+            Information("Running {0} build for code coverage", "Debug");
+            // need Debug build for code coverage
+            DotNetCoreBuild(srcDir, new DotNetCoreBuildSettings {
+                NoRestore = true,
+                Configuration = "Debug",
+            });
+        }
+        Information("Running {0} build for code coverage", buildConfig);
         DotNetCoreBuild(srcDir, new DotNetCoreBuildSettings {
             NoRestore = true,
             Configuration = buildConfig,
@@ -148,12 +242,22 @@ Task("Build")
 Task("CreateNugetPackages")
     .Does(() => {
         Action<string> buildPackage = (string projectName) => {
+          var projectFileName = $"{srcDir}/lib/{projectName}/{projectName}.csproj";
+          
+          if (isTagged) {
+            var releaseNotes = $"https://github.com/alphacloud/messagepack/releases/tag/{milestone}";
+            Information("Updating ReleaseNotes Link for project {0} to {1}", projectName, releaseNotes);
+            XmlPoke(projectFileName,
+              "/Project/PropertyGroup[@Label=\"Package\"]/PackageReleaseNotes",
+              releaseNotes
+            );
+          }
 
-            DotNetCorePack($"{srcDir}/lib/{projectName}/{projectName}.csproj", new DotNetCorePackSettings {
-                Configuration = buildConfig,
-                OutputDirectory = packagesDir,
-                NoBuild = true,
-                ArgumentCustomization = args => args.Append($"-p:Version={nugetVersion}")
+          DotNetCorePack(projectFileName, new DotNetCorePackSettings {
+              Configuration = buildConfig,
+              OutputDirectory = packagesDir,
+              NoBuild = true,
+              ArgumentCustomization = args => args.Append($"-p:Version={nugetVersion}")
             });
         };
 
@@ -181,6 +285,7 @@ Task("CloseMilestone")
 Task("Default")
     .IsDependentOn("UpdateAppVeyorBuildNumber")
     .IsDependentOn("Build")
+    .IsDependentOn("RunUnitTests")
     .IsDependentOn("CreateNugetPackages")
     .IsDependentOn("CreateRelease")
     .IsDependentOn("CloseMilestone")

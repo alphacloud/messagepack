@@ -10,17 +10,20 @@ nuget:
 os: Visual Studio 2017
 
 environment:
+  # Set the DOTNET_SKIP_FIRST_TIME_EXPERIENCE environment variable to stop wasting time caching packages
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Disable sending usage data to Microsoft
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  coveralls_repo_token:
+    secure: PPV4OTsE0mqUJQ5UXY8dKJnifv+488XNxe7rtyUbiYJNMgvOooUZvGeSxhsOIJmJ
   CAKE_SETTINGS_SKIPVERIFICATION: true
   GITHUB_USER:
     secure: 5NfHPjw31vB/XxJqwpHp3cl3n/9F7PTUVXhMIqRSDJE=
   GITHUB_PASSWORD:
     secure: 9gArAAMTQRHIsSZcJ+87GM+kaSfsBlouuFHtBR1hWBY=
 
-#cache:
-#  - c:\tmp\cake\tools -> appveor.yml
-
 build_script:
-  - ps: ./build.ps1 -verbosity diagnostic
+  - ps: ./build.ps1
 
 test: off
 

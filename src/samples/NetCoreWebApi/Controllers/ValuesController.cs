@@ -23,6 +23,13 @@
             return new TestModel(id);
         }
 
+        [FormatFilter]
+        [HttpGet("format/{id}.{format}")]
+        public ActionResult<TestModel> GetWithFormat(int id)
+        {
+            return new TestModel(id);
+        }
+
         /// <summary>
         ///     Echo model back.
         /// </summary>
