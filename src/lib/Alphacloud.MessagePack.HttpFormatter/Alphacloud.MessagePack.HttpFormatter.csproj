@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Build">
-    <TargetFrameworks>netstandard1.6;netstandard2.0;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
@@ -24,11 +24,11 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>messagepack msgpack mvc-core formatter alphacloud</PackageTags>
+    <PackageTags>messagepack msgpack webapi formatter serialization alphacloud</PackageTags>
     <PackageReleaseNotes>https://github.com/alphacloud/messagepack/releases/tag/0.1.0</PackageReleaseNotes>
     <Authors>shatl</Authors>
     <Company>Alphacloud</Company>
-    <Description>MessagePack formatters for ASP.NET Core MVC</Description>
+    <Description>MessagePack formatters for WebApi client</Description>
     <Copyright>(c) Alphacloud</Copyright>
   </PropertyGroup>
 
@@ -40,22 +40,10 @@
 
   <ItemGroup>
     <Compile Include="..\..\common\AssemblyVersion.cs" Link="AssemblyVersion.cs" />
-    <Compile Include="..\Alphacloud.MessagePack.HttpFormatter\ReadableTypesCache.cs" Link="ReadableTypesCache.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[1.1.2, 2.0.0)" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[1.1.2, 2.0.0)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[2.0.0, 3.0.0)" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.0.0, 3.0.0)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[2.2.0, 3.0.0)" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.2.0, 3.0.0)" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="[5.2.7, 6.0.0)" />
   </ItemGroup>
 
   <ItemGroup Label="Package References">

@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.AspNetCore.Formatters\Alphacloud.MessagePack.AspNetCore.Formatters.csproj" />
+    <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.HttpFormatter\Alphacloud.MessagePack.HttpFormatter.csproj" />
     <ProjectReference Include="..\..\samples\NetCoreWebApi\NetCoreWebApi.csproj" />
   </ItemGroup>
 
