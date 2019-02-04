@@ -9,8 +9,9 @@ This library leverages [MessagePack-CSharp](https://github.com/neuecc/MessagePac
 
 ||Stable|Pre-release|
 |:--:|:--:|:--:|
-| Build | [![Master](https://ci.appveyor.com/api/projects/status/jvcg5663lannifb9/branch/master?svg=true)](https://ci.appveyor.com/project/shatl/messagepack/branch/master) | [![PreRelease](https://ci.appveyor.com/api/projects/status/jvcg5663lannifb9?svg=true)](https://ci.appveyor.com/project/shatl/messagepack)
-| NuGet | [![NuGet](https://img.shields.io/nuget/v/Alphacloud.MessagePack.AspNetCore.Formatters.svg)](Release) | [![NuGet](https://img.shields.io/nuget/vpre/Alphacloud.MessagePack.AspNetCore.Formatters.svg)](PreRelease)|
+| Build                                   | [![Master](https://ci.appveyor.com/api/projects/status/jvcg5663lannifb9/branch/master?svg=true)](https://ci.appveyor.com/project/shatl/messagepack/branch/master) | [![PreRelease](https://ci.appveyor.com/api/projects/status/jvcg5663lannifb9?svg=true)](https://ci.appveyor.com/project/shatl/messagepack)
+| NuGet ASP.NET Core MVC formatters       | [![NuGet](https://img.shields.io/nuget/v/Alphacloud.MessagePack.AspNetCore.Formatters.svg)](Release) | [![NuGet](https://img.shields.io/nuget/vpre/Alphacloud.MessagePack.AspNetCore.Formatters.svg)](PreRelease)|
+| NuGet MediaTypeFormatter for HttpClient | [![NuGet](https://img.shields.io/nuget/v/Alphacloud.MessagePack.HttpFormatter.svg)](Release) | [![NuGet](https://img.shields.io/nuget/vpre/Alphacloud.MessagePack.HttpFormatter.svg)](PreRelease)|
 
 
 ## Packages
