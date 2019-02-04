@@ -1,4 +1,4 @@
-# MessagePack Formatters for ASP.NET Core MVC
+# MessagePack Formatters for ASP.NET Core MVC and HttpClient
 
 Allows to use [MessagePack format](http://msgpack.org/) with ASP.NET Core MVC. If multiple formatters are configured,
 content negotiation is used to determine which formatter to use.
@@ -13,28 +13,34 @@ This library leverages [MessagePack-CSharp](https://github.com/neuecc/MessagePac
 | NuGet | [![NuGet](https://img.shields.io/nuget/v/Alphacloud.MessagePack.AspNetCore.Formatters.svg)](Release) | [![NuGet](https://img.shields.io/nuget/vpre/Alphacloud.MessagePack.AspNetCore.Formatters.svg)](PreRelease)|
 
 
+## Packages
+* [ASP.NET Core MVC formatters](#aspnet-core-mvc-formatters)
+* [MediaTypeFormatter for HttpClient](#mediatypeformatter-for-httpclient)
 
-# Installation
+
+# ASP.NET Core MVC formatters
+
+## Installation
 
 ```
 Install-Packagge Alphacloud.MessagePack.AspNetCore.Formatters
 ```
 
 
-# Features
+## Features
 
 * Input formatter (decode MessagePack payload).
 * Output formatter (encode MessagePack payload).
 * Source link support (source code on demand in debugger).
 
 
-# Usage
+## Usage
 
-## Default configuration
+### Default configuration
 
 Default configuration uses `application/x-msgpack` media type and `ContractlessStandardResolver`.
 
-### Full MVC
+#### Full MVC
 
 Add `AddMsgPackFormatters` to your `Startup.cs / ConfigureServices`
 ```
@@ -46,7 +52,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-### MVC Core
+#### MVC Core
 
 When using minimal MVC configuration (e.g. in WebAPI service) only base services are added by default.
 You are responsible for configuring each of the service you are going to use.
@@ -77,7 +83,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-## Custom configuration
+### Custom configuration
 
 Default configuration can be changed by providing callback to `AddMessagePackFormatters` method.
 
@@ -100,6 +106,38 @@ services.AddMvc()
 ```
 
 
+# MediaTypeFormatter for HttpClient
+
+[Microsoft.AspNet.WebApi.Client](https://www.nuget.org/packages/Microsoft.AspNet.WebApi.Client/) package contains adds support for formatting and content negotiation to System.Net.Http. 
+It allows to add custom content serializers by extending `MediaTypeFormatter` class.
+
+
+## Installation
+```
+Install-Package Alphacloud.MessagePack.HttpFormatter
+```
+
+## Usage
+
+### Sending request
+
+Library contains two extension methods `PostAsMsgPackAsync` and `PutAsMsgPackAsync`. To serialize payload `ContractlessStandardResolver` is used, which gives a JSON-like experience.
+
+```
+var response = await httpClient.PostAsMsgPackAsync(uri, payload, cancellationToken).ConfigureAwait(false);
+
+```
+
+### Reading response
+To deserialize Msgpack response, formatter must be added to `formatters` collection passed to `ReadAsAsync` extension method.
+
+This is **recommeded** method as uses content negotiation.
+```
+var res = await response.Content.ReadAsAsync<TestModel>(_formatters, CancellationToken.None);
+```
+
+if you are expecting only MsgPack content, 
+
 # Samples
 
 Sample application is located at `src/samples/NetCoreWebApi`.
@@ -114,5 +152,7 @@ Sample Postman requests can be found at `src/samples/MessagePack.postman_collect
   * https://www.stevejgordon.co.uk/aspnetcore-anatomy-deep-dive-index
   * https://offering.solutions/blog/articles/2017/02/07/difference-between-addmvc-addmvcore/
 * Content negotiation in ASP.NET Core MVC https://code-maze.com/content-negotiation-dotnet-core/
+* Microsoft.AspNet.WebApi.Client https://www.nuget.org/packages/Microsoft.AspNet.WebApi.Client/
 * Source Link - https://github.com/ctaggart/SourceLink
 * Postman https://www.getpostman.com/downloads/
+ 

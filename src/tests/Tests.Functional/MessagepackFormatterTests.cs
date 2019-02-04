@@ -4,8 +4,10 @@
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Threading;
     using System.Threading.Tasks;
     using Alphacloud.MessagePack.AspNetCore.Formatters;
+    using Alphacloud.MessagePack.WebApi.Client;
     using FluentAssertions;
     using MessagePack;
     using MessagePack.Resolvers;
@@ -54,6 +56,19 @@
         }
 
         [Fact]
+        public async Task CanGetUsingWebApiClient()
+        {
+            using (var response = await _setup.Client.GetAsync(new Uri("/api/values", UriKind.Relative)))
+            {
+                response.EnsureSuccessStatusCode();
+                var res = await response.Content.ReadAsAsync<IEnumerable<TestModel>>(_setup.Formatters)
+                    .ConfigureAwait(false);
+                res.Should().OnlyContain(x => x.Id == 1 || x.Id == 2);
+            }
+        }
+
+
+        [Fact]
         public async Task CanGetJson()
         {
             using (var req = new HttpRequestMessage(HttpMethod.Get, new Uri("/api/values", UriKind.Relative)))
@@ -83,6 +98,20 @@
                     var res = await ReadData<TestModel>(response).ConfigureAwait(false);
                     res.Should().BeEquivalentTo(model);
                 }
+            }
+        }
+
+        [Fact]
+        public async Task CanPostUsingWebApiClient()
+        {
+            var testModel = new TestModel(20);
+            var uri = new Uri("/api/values", UriKind.Relative);
+
+            using (var response = await _setup.Client.PostAsMsgPackAsync(uri, testModel, CancellationToken.None).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
+                res.Should().BeEquivalentTo(testModel);
             }
         }
     }

@@ -46,7 +46,8 @@ var appVeyorJobId = AppVeyor.Environment.JobId;
 // Solution settings
 // Nuget packages to build
 var nugetPackages = new [] {
-    "Alphacloud.MessagePack.AspNetCore.Formatters"
+    "Alphacloud.MessagePack.AspNetCore.Formatters",
+    "Alphacloud.MessagePack.HttpFormatter"
 };
 
 // Calculate version and commit hash

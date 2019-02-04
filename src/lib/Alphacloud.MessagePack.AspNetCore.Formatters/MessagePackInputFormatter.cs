@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Threading.Tasks;
     using global::MessagePack;
+    using Internal;
     using JetBrains.Annotations;
     using Microsoft.AspNetCore.Mvc.Formatters;
 
@@ -16,6 +16,7 @@
     public class MessagePackInputFormatter : InputFormatter
     {
         readonly IFormatterResolver _resolver;
+        readonly ReadableTypesCache _readableTypesCache;
 
         /// <inheritdoc />
         public MessagePackInputFormatter([NotNull] IFormatterResolver resolver, [NotNull] ICollection<string> mediaTypes)
@@ -23,6 +24,7 @@
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
             if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
+            _readableTypesCache = new ReadableTypesCache(resolver);
 
             foreach (var mediaType in mediaTypes)
             {
@@ -41,8 +43,7 @@
         /// <inheritdoc />
         protected override bool CanReadType(Type type)
         {
-            var typeInfo = type.GetTypeInfo();
-            return !typeInfo.IsAbstract;
+            return _readableTypesCache.CanRead(type);
         }
     }
 }
