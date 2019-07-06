@@ -22,6 +22,10 @@ environment:
   GITHUB_PASSWORD:
     secure: 9gArAAMTQRHIsSZcJ+87GM+kaSfsBlouuFHtBR1hWBY=
 
+install:
+  - appveyor DownloadFile https://dot.net/v1/dotnet-install.ps1 -FileName dotnet-install.ps1
+  - ps: ./dotnet-install.ps1 -Version 3.0.100-preview6-012264 -InstallDir "C:\Program Files\dotnet"
+  
 build_script:
   - ps: ./build.ps1
 

@@ -245,7 +245,7 @@ Task("CreateNugetPackages")
           var projectFileName = $"{srcDir}/lib/{projectName}/{projectName}.csproj";
           
           if (isTagged) {
-            var releaseNotes = $"https://github.com/alphacloud/messagepack/releases/tag/{milestone}";
+            var releaseNotes = $"https://github.com/{repoOwner}/{repoName}/releases/tag/{milestone}";
             Information("Updating ReleaseNotes Link for project {0} to {1}", projectName, releaseNotes);
             XmlPoke(projectFileName,
               "/Project/PropertyGroup[@Label=\"Package\"]/PackageReleaseNotes",
