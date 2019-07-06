@@ -116,13 +116,11 @@ Task("SetVersion")
 
 Task("UpdateAppVeyorBuildNumber")
     .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
+    .ContinueOnError()
     .Does(() =>
     {
         AppVeyor.UpdateBuildVersion(buildVersion);
 
-    }).ReportError(exception =>
-    {
-        Warning("Build with version {0} already exists.", buildVersion);
     });
 
 
@@ -217,6 +215,7 @@ Task("RunUnitTests")
         }
     });
 
+
 Task("Build")
     .IsDependentOn("SetVersion")
     .IsDependentOn("UpdateAppVeyorBuildNumber")
@@ -237,6 +236,7 @@ Task("Build")
             Configuration = buildConfig,
         });
     });
+
 
 
 Task("CreateNugetPackages")
