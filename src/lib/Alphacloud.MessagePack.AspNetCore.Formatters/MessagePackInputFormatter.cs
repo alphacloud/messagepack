@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using global::MessagePack;
     using Internal;
@@ -15,8 +16,8 @@
     [PublicAPI]
     public class MessagePackInputFormatter : InputFormatter
     {
-        readonly IFormatterResolver _resolver;
         readonly ReadableTypesCache _readableTypesCache;
+        readonly IFormatterResolver _resolver;
 
         /// <inheritdoc />
         public MessagePackInputFormatter([NotNull] IFormatterResolver resolver, [NotNull] ICollection<string> mediaTypes)
@@ -33,11 +34,12 @@
         }
 
         /// <inheritdoc />
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
+        public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
             var request = context.HttpContext.Request;
-            var result = MessagePackSerializer.NonGeneric.Deserialize(context.ModelType, request.Body, _resolver);
-            return InputFormatterResult.SuccessAsync(result);
+
+            var result = await AsyncSerializerCache.Instance.Get(context.ModelType).DeserializeAsync(request.Body, _resolver);
+            return InputFormatterResult.Success(result);
         }
 
         /// <inheritdoc />
@@ -45,5 +47,6 @@
         {
             return _readableTypesCache.CanRead(type);
         }
+
     }
 }

@@ -51,6 +51,7 @@
         public async Task CanGet()
         {
             var response = await _setup.Client.GetAsync(new Uri("/api/values", UriKind.Relative));
+            response.EnsureSuccessStatusCode();
             var res = await ReadData<IEnumerable<TestModel>>(response);
             res.Should().OnlyContain(x => x.Id == 1 || x.Id == 2);
         }
