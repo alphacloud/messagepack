@@ -13,6 +13,7 @@
     /// </summary>
     public class MessagePackOutputFormatter : OutputFormatter
     {
+        static readonly byte[] NilBuffer = {MessagePackCode.Nil};
         readonly IFormatterResolver _resolver;
 
         /// <summary>
@@ -33,25 +34,22 @@
         }
 
         /// <inheritdoc />
-        public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
+        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
             if (context.ObjectType == typeof(object))
             {
                 if (context.Object == null)
                 {
-                    context.HttpContext.Response.Body.WriteByte(MessagePackCode.Nil);
+                    await context.HttpContext.Response.Body.WriteAsync(NilBuffer, 0, 1, context.HttpContext.RequestAborted).ConfigureAwait(false);
                 }
-                else
-                {
-                    // infer type from the instance
-                    MessagePackSerializer.NonGeneric.Serialize(context.Object.GetType(),
-                        context.HttpContext.Response.Body, context.Object, _resolver);
-                }
-            }
-            else
-                MessagePackSerializer.NonGeneric.Serialize(context.ObjectType, context.HttpContext.Response.Body, context.Object, _resolver);
 
-            return Task.CompletedTask;
+                await AsyncSerializerCache.Instance.Get(context.Object.GetType())
+                    .SerializeAsync(context.HttpContext.Response.Body, context.Object, _resolver)
+                    .ConfigureAwait(false);
+            }
+
+            await AsyncSerializerCache.Instance.Get(context.ObjectType).SerializeAsync(context.HttpContext.Response.Body, context.Object, _resolver)
+                .ConfigureAwait(false);
         }
     }
 }
