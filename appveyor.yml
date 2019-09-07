@@ -24,7 +24,7 @@ environment:
 
 install:
   - appveyor DownloadFile https://dot.net/v1/dotnet-install.ps1 -FileName dotnet-install.ps1
-  - ps: ./dotnet-install.ps1 -Version 3.0.100-preview8-013656 -InstallDir "C:\Program Files\dotnet"
+  - ps: ./dotnet-install.ps1 -Version 3.0.100-preview9-014004 -InstallDir "C:\Program Files\dotnet"
   
 build_script:
   - ps: ./build.ps1
