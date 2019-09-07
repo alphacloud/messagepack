@@ -20,5 +20,6 @@ issue-labels-include:
 - invalid
 - question
 - wontfix
+- build
 issue-labels-exclude:
 - internal-refactoring
