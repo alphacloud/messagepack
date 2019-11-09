@@ -38,4 +38,10 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(MSBuildProjectName.Contains(Tests))' == true ">
+    <NoWarn>$(NoWarn),CS0618</NoWarn>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>False</IsPackable>
+  </PropertyGroup>
+  
 </Project>

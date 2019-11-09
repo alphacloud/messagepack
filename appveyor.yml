@@ -37,6 +37,7 @@ artifacts:
 
 deploy:
   - provider: NuGet
+    name: Pre-release
     api_key:
       secure: GhGzYN5/LaDMZdwRi+rbwcG20q3pqhoRmwsVGwRD2sXzsr+xaH6p34OcPsGcn3JP
     on:
@@ -45,3 +46,10 @@ deploy:
         - /release\/v.*/
         - /releases.*/
         - /hotfixes.*/
+
+  - provider: NuGet
+    name: Tagged release
+    api_key:
+      secure: GhGzYN5/LaDMZdwRi+rbwcG20q3pqhoRmwsVGwRD2sXzsr+xaH6p34OcPsGcn3JP
+    on:
+      appveyor_repo_tag: true
