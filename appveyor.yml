@@ -22,10 +22,6 @@ environment:
   GITHUB_PASSWORD:
     secure: 9gArAAMTQRHIsSZcJ+87GM+kaSfsBlouuFHtBR1hWBY=
 
-#install:
-#  - appveyor DownloadFile https://dot.net/v1/dotnet-install.ps1 -FileName dotnet-install.ps1
-#  - ps: ./dotnet-install.ps1 -Version 3.0.100-preview9-014004 -InstallDir "C:\Program Files\dotnet"
-  
 build_script:
   - ps: ./build.ps1
 
@@ -37,11 +33,19 @@ artifacts:
 
 deploy:
   - provider: NuGet
+    name: Pre-release
     api_key:
-      secure: GhGzYN5/LaDMZdwRi+rbwcG20q3pqhoRmwsVGwRD2sXzsr+xaH6p34OcPsGcn3JP
+      secure: UtOq3A67FSX/X2GYpy2sRB0a9xEoguCkjUuo8UTV9svFeVJT//g4IhJiyCtSYq9u
     on:
       branch:
         - develop
         - /release\/v.*/
         - /releases.*/
         - /hotfixes.*/
+
+  - provider: NuGet
+    name: Tagged release
+    api_key:
+      secure: UtOq3A67FSX/X2GYpy2sRB0a9xEoguCkjUuo8UTV9svFeVJT//g4IhJiyCtSYq9u
+    on:
+      appveyor_repo_tag: true
