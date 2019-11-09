@@ -13,37 +13,16 @@
 #tool nuget:?package=ReportGenerator&version=4.2.17
 
 // ARGUMENTS
-var target = Argument("target", "Default");
-if (string.IsNullOrWhiteSpace(target))
-{
-    target = "Default";
-}
-
-var buildConfig = Argument("buildConfig", "Release");
-if (string.IsNullOrEmpty(buildConfig)) {
-    buildConfig = "Release";
-}
 
 #load "defaults.cake"
+
+
+var target = Argument("target", "Default");
 
 // Build configuration
 
 var repoOwner = "alphacloud";
 var repoName = "messagepack";
-
-var local = BuildSystem.IsLocalBuild;
-var isPullRequest = AppVeyor.Environment.PullRequest.IsPullRequest;
-var isRepository = StringComparer.OrdinalIgnoreCase.Equals($"{repoOwner}/{repoName}", AppVeyor.Environment.Repository.Name);
-
-var isDebugBuild = string.Equals(buildConfig, "Debug", StringComparison.OrdinalIgnoreCase);
-var isReleaseBuild = string.Equals(buildConfig, "Release", StringComparison.OrdinalIgnoreCase);
-
-var isDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", AppVeyor.Environment.Repository.Branch);
-var isReleaseBranch = AppVeyor.Environment.Repository.Branch.IndexOf("releases/", StringComparison.OrdinalIgnoreCase) >= 0
-    || AppVeyor.Environment.Repository.Branch.IndexOf("hotfixes/", StringComparison.OrdinalIgnoreCase) >= 0;
-
-var isTagged = AppVeyor.Environment.Repository.Tag.IsTag;
-var appVeyorJobId = AppVeyor.Environment.JobId;
 
 // Solution settings
 // Nuget packages to build
@@ -61,6 +40,7 @@ var nextMajorRelease = $"{semVersion.Major+1}.0.0";
 var commitHash = semVersion.Sha;
 var milestone = semVersion.MajorMinorPatch;
 
+// paths
 // Artifacts
 var artifactsDir = "./artifacts";
 var artifactsDirAbsolutePath = MakeAbsolute(Directory(artifactsDir));
@@ -92,15 +72,19 @@ public class Credentials {
 
 // SETUP / TEARDOWN
 
-Setup((context) =>
+Setup<BuildInfo>(context =>
 {
-    Information("Building version {0} (tagged: {1}, local: {2}, release branch: {3})...", nugetVersion, isTagged, local, isReleaseBranch);
+    var buildInfo = BuildInfo.Get(context);
+
+    Information("Building version {0} (tagged: {1}, local: {2}, release branch: {3})...", nugetVersion, buildInfo.IsTagged, buildInfo.IsLocal, buildInfo.IsReleaseBranch);
     CreateDirectory(artifactsDir);
     CleanDirectory(artifactsDir);
     githubCredentials = new Credentials(
       context.EnvironmentVariable("GITHUB_USER"),
       context.EnvironmentVariable("GITHUB_PASSWORD")
     );
+
+    return buildInfo;
 });
 
 Teardown((context) =>
@@ -136,8 +120,8 @@ Task("Restore")
 
 
 Task("RunXunitTests")
-    .DoesForEach(GetFiles($"{testsRootDir}/**/*.csproj"), 
-    (testProj) => {
+    .DoesForEach<BuildInfo, FilePath>(GetFiles($"{testsRootDir}/**/*.csproj"), 
+    (build, testProj, ctx) => {
         var projectPath = testProj.GetDirectory();
         var projectFilename = testProj.GetFilenameWithoutExtension();
         Information("Calculating code coverage for {0} ...", projectFilename);
@@ -159,7 +143,7 @@ Task("RunXunitTests")
                 .AppendSwitch("--results-directory", artifactsDirAbsolutePath.FullPath)
                 .Append("--no-restore")
                 .Append("--no-build");
-            if (!local) {
+            if (!build.IsLocal) {
                 pb.AppendSwitch("--test-adapter-path", ".")
                     .AppendSwitch("--logger", "AppVeyor");
             }
@@ -179,7 +163,7 @@ Task("RunXunitTests")
             openCoverSettings);
 
         // run tests again if Release mode was requested
-        if (isReleaseBuild) {
+        if (build.IsRelease) {
             Information("Running Release mode tests for {0}", projectFilename.ToString());
             DotNetCoreTool(testProj.FullPath,
                 "test",
@@ -200,26 +184,27 @@ Task("CleanPreviousTestResults")
     });
 
 Task("GenerateCoverageReport")
-    .WithCriteria(() => local)
-    .Does(() =>
+    .WithCriteria<BuildInfo>((ctx, build) => build.IsLocal)
+    .Does<BuildInfo>(build =>
     {
         ReportGenerator(testCoverageOutputFile, codeCoverageReportDir);
     });
 
+Task("UploadCoverage")
+    .WithCriteria<BuildInfo>((ctx, build) => !build.IsLocal)
+    .Does<BuildInfo>(build => {
+        CoverallsIo(testCoverageOutputFile);
+    });
 
 Task("RunUnitTests")
     .IsDependentOn("Build")
     .IsDependentOn("CleanPreviousTestResults")
     .IsDependentOn("RunXunitTests")
     .IsDependentOn("GenerateCoverageReport")
-    .Does(() =>
+    .IsDependentOn("UploadCoverage")
+    .Does<BuildInfo>(build =>
     {
         Information("Done Test");
-    })
-    .Finally(() => {
-        if (!local) {
-            CoverallsIo(testCoverageOutputFile);
-        }
     });
 
 
@@ -227,9 +212,9 @@ Task("Build")
     .IsDependentOn("SetVersion")
     .IsDependentOn("UpdateAppVeyorBuildNumber")
     .IsDependentOn("Restore")
-    .Does(() =>
+    .Does<BuildInfo>(build =>
     {
-        if (isReleaseBuild) {
+        if (build.IsRelease) {
             Information("Running {0} build for code coverage", "Debug");
             // need Debug build for code coverage
             DotNetCoreBuild(srcDir, new DotNetCoreBuildSettings {
@@ -237,21 +222,21 @@ Task("Build")
                 Configuration = "Debug",
             });
         }
-        Information("Running {0} build for code coverage", buildConfig);
+        Information("Running {0} build for code coverage", build.Config);
         DotNetCoreBuild(srcDir, new DotNetCoreBuildSettings {
             NoRestore = true,
-            Configuration = buildConfig,
+            Configuration = build.Config,
         });
     });
 
 
 
 Task("CreateNugetPackages")
-    .Does(() => {
+    .Does<BuildInfo>(build => {
         Action<string> buildPackage = (string projectName) => {
           var projectFileName = $"{srcDir}/lib/{projectName}/{projectName}.csproj";
           
-          if (isTagged) {
+          if (build.IsTagged) {
             var releaseNotes = $"https://github.com/{repoOwner}/{repoName}/releases/tag/{milestone}";
             Information("Updating ReleaseNotes Link for project {0} to {1}", projectName, releaseNotes);
             XmlPoke(projectFileName,
@@ -261,7 +246,7 @@ Task("CreateNugetPackages")
           }
 
           DotNetCorePack(projectFileName, new DotNetCorePackSettings {
-              Configuration = buildConfig,
+              Configuration = build.Config,
               OutputDirectory = packagesDir,
               NoBuild = true,
               ArgumentCustomization = args => args.Append($"-p:Version={nugetVersion}")
@@ -274,8 +259,8 @@ Task("CreateNugetPackages")
     });
 
 Task("CreateRelease")
-    .WithCriteria(() => isRepository && isReleaseBranch && !isPullRequest)
-    .Does(() => {
+    .WithCriteria<BuildInfo>((ctx, build) => build.IsRepository && build.IsReleaseBranch && !build.IsPullRequest)
+    .Does<BuildInfo>(build => {
         GitReleaseManagerCreate(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName,
             new GitReleaseManagerCreateSettings {
               Milestone = milestone,
@@ -284,8 +269,8 @@ Task("CreateRelease")
     });
 
 Task("CloseMilestone")
-    .WithCriteria(() => isRepository && isTagged && !isPullRequest)
-    .Does(() => {
+    .WithCriteria<BuildInfo>((ctx, build) => build.IsRepository && build.IsTagged && !build.IsPullRequest)
+    .Does<BuildInfo>(build => {
         GitReleaseManagerClose(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName, milestone);
     });
 
