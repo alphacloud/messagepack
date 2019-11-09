@@ -20,8 +20,10 @@
 var target = Argument("target", "Default");
 
 // todo: move to settings
-ProjectSettings settings = new ProjectSettings("alphacloud", "messagepack", "Alphacloud.MessagePack") {
-    CodeCoverage = {
+ProjectSettings settings = new ProjectSettings("alphacloud", "messagepack", "Alphacloud.MessagePack")
+{
+    CodeCoverage =
+    {
         IncludeFilter = "+[Alphacloud.MessagePack.AspNetCore.Formatters]* +[Alphacloud.MessagePack.HttpFormatter]*"
     }
 };
@@ -40,24 +42,26 @@ Setup<BuildInfo>(context =>
     return buildInfo;
 });
 
-Teardown((context) =>
+Teardown(context =>
 {
     // Executed AFTER the last task.
 });
 
 
 Task("CleanAll")
-    .Does<BuildInfo>(data =>
-{
-    CleanDirectories($"{data.Paths.SrcDir}/**/obj");
-    CleanDirectories($"{data.Paths.SrcDir}/**/bin");
-});
+    .Does<BuildInfo>(build =>
+    {
+        CleanDirectories($"{build.Paths.SrcDir}/**/obj");
+        CleanDirectories($"{build.Paths.SrcDir}/**/bin");
+        CleanDirectories($"{build.Paths.ArtifactsDir}/**");
+    });
 
 Task("SetVersion")
     .Does<BuildInfo>(build =>
     {
-        CreateAssemblyInfo(build.Paths.CommonAssemblyVersionFile, new AssemblyInfoSettings{
-            FileVersion = build.Version.NuGet,
+        CreateAssemblyInfo(build.Paths.CommonAssemblyVersionFile, new AssemblyInfoSettings
+        {
+            FileVersion = build.Version.Milestone,
             InformationalVersion = build.Version.Informational,
             Version = build.Version.Milestone
         });
@@ -81,22 +85,11 @@ Task("Restore")
 
 
 Task("RunXunitTests")
-    .DoesForEach<BuildInfo, FilePath>(
-        (build, ctx) => GetFiles($"{build.Paths.TestsRootDir}/**/*.csproj"),
-    (build, testProj, ctx) => {
-        var projectPath = testProj.GetDirectory();
-        var projectFilename = testProj.GetFilenameWithoutExtension();
+    .Does<BuildInfo>(build =>
+    {
+        var projectPath = build.Paths.SrcDir;
+        var projectFilename = build.Settings.SolutionName;
         Information("Calculating code coverage for {0} ...", projectFilename);
-
-        var openCoverSettings = new OpenCoverSettings {
-            OldStyle = true,
-            ReturnTargetCodeOffset = 0,
-            ArgumentCustomization = args => args.Append("-mergeoutput").Append("-hideskipped:File;Filter;Attribute"),
-            WorkingDirectory = projectPath,
-        }
-        .WithFilter($"{build.Settings.CodeCoverage.IncludeFilter} {build.Settings.CodeCoverage.ExcludeFilter}")
-        .ExcludeByAttribute(build.Settings.CodeCoverage.ExcludeByAttribute)
-        .ExcludeByFile(build.Settings.CodeCoverage.ExcludeByFile);
 
         Func<string,ProcessArgumentBuilder> buildProcessArgs = (buildCfg) => {
             var pb = new ProcessArgumentBuilder()
@@ -115,19 +108,35 @@ Task("RunXunitTests")
             return pb;
         };
 
+        var openCoverSettings = new OpenCoverSettings
+        {
+            OldStyle = true,
+            ReturnTargetCodeOffset = 0,
+            ArgumentCustomization = args => args.Append("-mergeoutput").Append("-hideskipped:File;Filter;Attribute"),
+            WorkingDirectory = projectPath,
+        }
+        .WithFilter($"{build.Settings.CodeCoverage.IncludeFilter} {build.Settings.CodeCoverage.ExcludeFilter}")
+        .ExcludeByAttribute(build.Settings.CodeCoverage.ExcludeByAttribute)
+        .ExcludeByFile(build.Settings.CodeCoverage.ExcludeByFile);
+
         // run open cover for debug build configuration
         OpenCover(
-            tool => tool.DotNetCoreTool(projectPath.ToString(),
+            tool => tool.DotNetCoreTool(
+                projectPath.ToString(),
                 "test",
                 buildProcessArgs("Debug")
             ),
             build.Paths.RootDir.Combine(build.Paths.TestCoverageOutputFile).FullPath,
-            openCoverSettings);
+            openCoverSettings
+        );
 
         // run tests again if Release mode was requested
-        if (build.IsRelease) {
-            Information("Running Release mode tests for {0}", projectFilename.ToString());
-            DotNetCoreTool(testProj.FullPath,
+        if (build.IsRelease)
+        {
+            var solutionFullPath = build.Paths.RootDir.Combine(build.Paths.SrcDir).Combine(build.Settings.SolutionName) + ".sln";
+            Information("Running Release mode tests for {0}", projectFilename);
+            DotNetCoreTool(
+                solutionFullPath,
                 "test",
                 buildProcessArgs("Release")
             );
@@ -154,7 +163,8 @@ Task("GenerateCoverageReport")
 
 Task("UploadCoverage")
     .WithCriteria<BuildInfo>((ctx, build) => !build.IsLocal)
-    .Does<BuildInfo>(build => {
+    .Does<BuildInfo>(build =>
+    {
         CoverallsIo(build.Paths.TestCoverageOutputFile);
     });
 
@@ -171,7 +181,8 @@ Task("RunUnitTests")
 
 Task("UpdateReleaseNotesLink")
     .WithCriteria<BuildInfo>((ctx, build) => build.Repository.IsTagged)
-    .Does<BuildInfo>(build => {
+    .Does<BuildInfo>(build =>
+    {
         var releaseNotesUrl = $"https://github.com/{build.Settings.RepoOwner}/{build.Settings.RepoOwner}/releases/tag/{build.Version.Milestone}";
         Information("Updating ReleaseNotes URL to {1}", releaseNotesUrl);
         XmlPoke(build.Paths.BuildPropsFile,
@@ -204,9 +215,9 @@ Task("Build")
     });
 
 
-
 Task("CreateNugetPackages")
-    .Does<BuildInfo>(build => {
+    .Does<BuildInfo>(build =>
+    {
         DotNetCorePack(build.Paths.SrcDir, new DotNetCorePackSettings {
             Configuration = build.Config,
             OutputDirectory = build.Paths.PackagesDir,
@@ -217,8 +228,10 @@ Task("CreateNugetPackages")
     });
 
 Task("CreateRelease")
-    .WithCriteria<BuildInfo>((ctx, build) => build.Repository.IsMain && build.Repository.IsReleaseBranch && build.Repository.IsPullRequest == false)
-    .Does<BuildInfo>(build => {
+    .WithCriteria<BuildInfo>((ctx, build) =>
+        build.Repository.IsMain && build.Repository.IsReleaseBranch && build.Repository.IsPullRequest == false)
+    .Does<BuildInfo>(build =>
+    {
         GitReleaseManagerCreate(
             build.GitHubCredentials.UserName, build.GitHubCredentials.Password,
             build.Settings.RepoOwner, build.Settings.RepoName,
@@ -229,8 +242,10 @@ Task("CreateRelease")
     });
 
 Task("CloseMilestone")
-    .WithCriteria<BuildInfo>((ctx, build) => build.Repository.IsMain && build.Repository.IsTagged && build.Repository.IsPullRequest == false)
-    .Does<BuildInfo>(build => {
+    .WithCriteria<BuildInfo>((ctx, build) =>
+        build.Repository.IsMain && build.Repository.IsTagged && build.Repository.IsPullRequest == false)
+    .Does<BuildInfo>(build =>
+    {
         GitReleaseManagerClose(
             build.GitHubCredentials.UserName, build.GitHubCredentials.Password,
             build.Settings.RepoOwner, build.Settings.RepoName,
