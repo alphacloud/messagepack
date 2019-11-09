@@ -25,37 +25,25 @@ var repoOwner = "alphacloud";
 var repoName = "messagepack";
 
 // Solution settings
-// Nuget packages to build
-var nugetPackages = new [] {
-    "Alphacloud.MessagePack.AspNetCore.Formatters",
-    "Alphacloud.MessagePack.HttpFormatter"
-};
-
-// Calculate version and commit hash
-GitVersion semVersion = GitVersion();
-var nugetVersion = semVersion.NuGetVersion;
-var buildVersion = semVersion.FullBuildMetaData;
-var informationalVersion = semVersion.InformationalVersion;
-var nextMajorRelease = $"{semVersion.Major+1}.0.0";
-var commitHash = semVersion.Sha;
-var milestone = semVersion.MajorMinorPatch;
 
 // paths
 // Artifacts
 var artifactsDir = "./artifacts";
 var artifactsDirAbsolutePath = MakeAbsolute(Directory(artifactsDir));
-
 var testCoverageOutputFile = artifactsDir + "/OpenCover.xml";
 var codeCoverageReportDir = artifactsDir + "/CodeCoverageReport";
-var coverageFilter = "+[Alphacloud.MessagePack.AspNetCore.Formatters]* -[Tests*]*";
 var coverageExcludeByAttribute = "*.ExcludeFromCodeCoverage*";
 var coverageExcludeByFile = "*/*Designer.cs";
-
 var packagesDir = artifactsDir + "/packages";
 var srcDir = "./src";
+var buildPropsFile = srcDir + "/Directory.Build.props";
 var testsRootDir = srcDir + "/tests";
-var solutionFile = srcDir + "/Alphacloud.MessagePack.sln";
 var samplesDir = "./samples";
+var commonAssemblyVersionFile = srcDir + "/common/AssemblyVersion.cs";
+
+
+var coverageFilter = "+[Alphacloud.MessagePack.AspNetCore.Formatters]* -[Tests*]*";
+var solutionFile = srcDir + "/Alphacloud.MessagePack.sln";
 
 Credentials githubCredentials = null;
 
@@ -76,7 +64,8 @@ Setup<BuildInfo>(context =>
 {
     var buildInfo = BuildInfo.Get(context);
 
-    Information("Building version {0} (tagged: {1}, local: {2}, release branch: {3})...", nugetVersion, buildInfo.IsTagged, buildInfo.IsLocal, buildInfo.IsReleaseBranch);
+    Information("Building version {0} (tagged: {1}, local: {2}, release branch: {3})...", buildInfo.Version.NuGet, 
+        buildInfo.IsTagged, buildInfo.IsLocal, buildInfo.IsReleaseBranch);
     CreateDirectory(artifactsDir);
     CleanDirectory(artifactsDir);
     githubCredentials = new Credentials(
@@ -93,12 +82,12 @@ Teardown((context) =>
 });
 
 Task("SetVersion")
-    .Does(() =>
+    .Does<BuildInfo>(build =>
     {
-        CreateAssemblyInfo("./src/common/AssemblyVersion.cs", new AssemblyInfoSettings{
-            FileVersion = semVersion.MajorMinorPatch,
-            InformationalVersion = semVersion.InformationalVersion,
-            Version = semVersion.MajorMinorPatch
+        CreateAssemblyInfo(commonAssemblyVersionFile, new AssemblyInfoSettings{
+            FileVersion = build.Version.NuGet,
+            InformationalVersion = build.Version.Informational,
+            Version = build.Version.Milestone
         });
     });
 
@@ -106,9 +95,9 @@ Task("SetVersion")
 Task("UpdateAppVeyorBuildNumber")
     .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
     .ContinueOnError()
-    .Does(() =>
+    .Does<BuildInfo>(build =>
     {
-        AppVeyor.UpdateBuildVersion(buildVersion);
+        AppVeyor.UpdateBuildVersion(build.Version.Full);
     });
 
 
@@ -207,10 +196,22 @@ Task("RunUnitTests")
         Information("Done Test");
     });
 
+Task("UpdateReleaseNotesLink")
+    .WithCriteria<BuildInfo>((ctx, build) => build.IsTagged)
+    .Does<BuildInfo>(build => {
+        var releaseNotes = $"https://github.com/{repoOwner}/{repoName}/releases/tag/{build.Version.Milestone}";
+        Information("Updating ReleaseNotes Link to {1}", releaseNotes);
+        XmlPoke(buildPropsFile,
+            "/Project/PropertyGroup[@Label=\"Package\"]/PackageReleaseNotes",
+            releaseNotes
+        );
+    });
+
 
 Task("Build")
     .IsDependentOn("SetVersion")
     .IsDependentOn("UpdateAppVeyorBuildNumber")
+    .IsDependentOn("UpdateReleaseNotesLink")
     .IsDependentOn("Restore")
     .Does<BuildInfo>(build =>
     {
@@ -222,7 +223,7 @@ Task("Build")
                 Configuration = "Debug",
             });
         }
-        Information("Running {0} build for code coverage", build.Config);
+        Information("Running {0} build", build.Config);
         DotNetCoreBuild(srcDir, new DotNetCoreBuildSettings {
             NoRestore = true,
             Configuration = build.Config,
@@ -233,29 +234,13 @@ Task("Build")
 
 Task("CreateNugetPackages")
     .Does<BuildInfo>(build => {
-        Action<string> buildPackage = (string projectName) => {
-          var projectFileName = $"{srcDir}/lib/{projectName}/{projectName}.csproj";
-          
-          if (build.IsTagged) {
-            var releaseNotes = $"https://github.com/{repoOwner}/{repoName}/releases/tag/{milestone}";
-            Information("Updating ReleaseNotes Link for project {0} to {1}", projectName, releaseNotes);
-            XmlPoke(projectFileName,
-              "/Project/PropertyGroup[@Label=\"Package\"]/PackageReleaseNotes",
-              releaseNotes
-            );
-          }
-
-          DotNetCorePack(projectFileName, new DotNetCorePackSettings {
-              Configuration = build.Config,
-              OutputDirectory = packagesDir,
-              NoBuild = true,
-              ArgumentCustomization = args => args.Append($"-p:Version={nugetVersion}")
-            });
-        };
-
-        foreach(var projectName in nugetPackages) {
-            buildPackage(projectName);
-        };
+        DotNetCorePack(srcDir, new DotNetCorePackSettings {
+            Configuration = build.Config,
+            OutputDirectory = packagesDir,
+            NoRestore = true,
+            NoBuild = true,
+            ArgumentCustomization = args => args.Append($"-p:Version={build.Version.NuGet}")
+        });
     });
 
 Task("CreateRelease")
@@ -263,7 +248,7 @@ Task("CreateRelease")
     .Does<BuildInfo>(build => {
         GitReleaseManagerCreate(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName,
             new GitReleaseManagerCreateSettings {
-              Milestone = milestone,
+              Milestone = build.Version.Milestone,
               TargetCommitish = "master"
         });
     });
@@ -271,7 +256,7 @@ Task("CreateRelease")
 Task("CloseMilestone")
     .WithCriteria<BuildInfo>((ctx, build) => build.IsRepository && build.IsTagged && !build.IsPullRequest)
     .Does<BuildInfo>(build => {
-        GitReleaseManagerClose(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName, milestone);
+        GitReleaseManagerClose(githubCredentials.UserName, githubCredentials.Password, repoOwner, repoName, build.Version.Milestone);
     });
 
 Task("Default")
