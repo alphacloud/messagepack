@@ -1,0 +1,47 @@
+<Project>
+
+  <PropertyGroup Label="Build">
+    <TargetFrameworks>netstandard1.6;netstandard2.0;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+    <SignAssembly>True</SignAssembly>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <DebugSymbols>True</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <RepositoryUrl>https://github.com/alphacloud/messagepack-mvc</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>messagepack msgpack formatter alphacloud</PackageTags>
+    <PackageReleaseNotes>https://github.com/alphacloud/messagepack/releases/tag/0.1.0</PackageReleaseNotes>
+    <Authors>shatl</Authors>
+    <Company>Alphacloud</Company>
+    <Description>MessagePack formatters</Description>
+    <Copyright>(c) Alphacloud</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Label="SourceLink">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(MSBuildProjectName.Contains(Tests))' == true ">
+    <NoWarn>$(NoWarn),CS0618</NoWarn>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>False</IsPackable>
+  </PropertyGroup>
+  
+</Project>
