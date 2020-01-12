@@ -20,21 +20,24 @@
     [PublicAPI]
     public class MessagePackMediaTypeFormatter : MediaTypeFormatter
     {
+        static readonly byte[] NilBuffer = {MessagePackCode.Nil};
+        static readonly object _lock = new object();
+        static readonly IDictionary<Type, object> _valueTypeDefaults = new Dictionary<Type, object>(16);
+
         /// <summary>
         ///     MessagePack media type.
         /// </summary>
         [PublicAPI] public const string DefaultMediaType = "application/x-msgpack";
 
-        static readonly Task<object> NullResult = Task.FromResult<object>(null);
-        [NotNull] readonly IFormatterResolver _resolver;
-        ReadableTypesCache _readableTypesCache;
+        [NotNull] readonly MessagePackSerializerOptions _options;
+        [NotNull] ReadableTypesCache _readableTypesCache;
 
         /// <inheritdoc />
-        public MessagePackMediaTypeFormatter([NotNull] IFormatterResolver resolver, [NotNull] ICollection<string> mediaTypes)
+        public MessagePackMediaTypeFormatter([NotNull] MessagePackSerializerOptions options, [NotNull] ICollection<string> mediaTypes)
         {
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
-            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            _readableTypesCache = new ReadableTypesCache(resolver);
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _readableTypesCache = new ReadableTypesCache(options.Resolver);
 
             foreach (var mediaType in mediaTypes)
             {
@@ -47,7 +50,7 @@
             : base(formatter)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
-            _resolver = formatter._resolver;
+            _options = formatter._options;
             _readableTypesCache = formatter._readableTypesCache;
         }
 
@@ -65,7 +68,7 @@
         }
 
         /// <inheritdoc />
-        public override Task<object> ReadFromStreamAsync(
+        public override async Task<object> ReadFromStreamAsync(
             Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
@@ -75,22 +78,21 @@
             long? contentLength = content?.Headers?.ContentLength;
             if (contentLength.HasValue && contentLength.GetValueOrDefault() == 0L)
             {
-                return GetDefaultAsyncResultForType(type);
+                return GetDefaultForType(type);
             }
 
             try
             {
-                var result = MessagePackSerializer.NonGeneric.Deserialize(type, readStream, _resolver);
-                return result != null
-                    ? Task.FromResult(result)
-                    : NullResult;
+                var result = await MessagePackSerializer.DeserializeAsync(type, readStream, _options)
+                    .ConfigureAwait(false);
+                return result;
             }
             catch (Exception exception)
             {
                 if (formatterLogger == null) throw;
 
                 formatterLogger.LogError(string.Empty, exception);
-                return GetDefaultAsyncResultForType(type);
+                return GetDefaultForType(type);
             }
         }
 
@@ -106,21 +108,25 @@
 
             if (value == null && type == typeof(object))
             {
-                writeStream.WriteByte(MessagePackCode.Nil);
-            }
-            else
-            {
-                MessagePackSerializer.NonGeneric.Serialize(type, writeStream, value, _resolver);
+                return writeStream.WriteAsync(NilBuffer, 0, 1, cancellationToken);
             }
 
-            return Task.CompletedTask;
+            return MessagePackSerializer.SerializeAsync(type, writeStream, value, _options, cancellationToken);
         }
 
-        static Task<object> GetDefaultAsyncResultForType(Type type)
+        static object GetDefaultForType(Type type)
         {
-            return type.IsValueType
-                ? Task.FromResult(Activator.CreateInstance(type))
-                : NullResult;
+            if (!type.IsValueType) return null;
+
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (_valueTypeDefaults.TryGetValue(type, out var def)) return def;
+            lock (_lock)
+            {
+                if (_valueTypeDefaults.TryGetValue(type, out def)) return def;
+                def = Activator.CreateInstance(type);
+                _valueTypeDefaults[type] = def;
+                return def;
+            }
         }
     }
 }

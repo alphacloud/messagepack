@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
-#if NETCOREAPP3_0
+#if NETCOREAPP3_0 || NETCOREAPP3_1
     using Microsoft.Extensions.Hosting;
 #endif
     using Microsoft.Extensions.Configuration;
@@ -24,7 +24,7 @@
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMessagePack();
-#if NETCOREAPP3_0
+#if NETCOREAPP3_0 || NETCOREAPP3_1
             services.AddControllersWithViews()
                 .AddNewtonsoftJson();
             services.AddRazorPages();
@@ -41,7 +41,7 @@
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
-#if NETCOREAPP3_0
+#if NETCOREAPP3_0 || NETCOREAPP3_1
             IWebHostEnvironment env
 #else
             IHostingEnvironment env
@@ -52,7 +52,7 @@
             {
                 app.UseDeveloperExceptionPage();
             }
-#if NETCOREAPP3_0
+#if NETCOREAPP3_0 || NETCOREAPP3_1
             app.UseRouting();
             
             app.UseEndpoints(endpoints =>

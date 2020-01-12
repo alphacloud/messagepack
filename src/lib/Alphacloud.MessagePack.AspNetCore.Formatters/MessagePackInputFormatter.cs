@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading.Tasks;
     using global::MessagePack;
     using Internal;
@@ -17,15 +16,15 @@
     public class MessagePackInputFormatter : InputFormatter
     {
         readonly ReadableTypesCache _readableTypesCache;
-        readonly IFormatterResolver _resolver;
+        readonly MessagePackSerializerOptions _options;
 
         /// <inheritdoc />
-        public MessagePackInputFormatter([NotNull] IFormatterResolver resolver, [NotNull] ICollection<string> mediaTypes)
+        public MessagePackInputFormatter([NotNull] MessagePackSerializerOptions options, [NotNull] ICollection<string> mediaTypes)
         {
-            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
             if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
-            _readableTypesCache = new ReadableTypesCache(resolver);
+            _readableTypesCache = new ReadableTypesCache(options.Resolver);
 
             foreach (var mediaType in mediaTypes)
             {
@@ -36,9 +35,9 @@
         /// <inheritdoc />
         public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
-            var request = context.HttpContext.Request;
-
-            var result = await AsyncSerializerCache.Instance.Get(context.ModelType).DeserializeAsync(request.Body, _resolver);
+            var httpContext = context.HttpContext;
+            var result = await MessagePackSerializer.DeserializeAsync(context.ModelType, httpContext.Request.Body, _options,
+                httpContext.RequestAborted).ConfigureAwait(false);
             return InputFormatterResult.Success(result);
         }
 

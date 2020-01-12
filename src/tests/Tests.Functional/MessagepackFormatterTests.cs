@@ -32,7 +32,7 @@
             var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             var res = MessagePackSerializer.Deserialize<T>(
                 stream,
-                ContractlessStandardResolver.Instance
+                ContractlessStandardResolver.Options
             );
             return res;
         }
@@ -91,7 +91,7 @@
 
             using (var req = new HttpRequestMessage(HttpMethod.Post, new Uri("/api/values", UriKind.Relative)))
             {
-                req.Content = new ByteArrayContent(MessagePackSerializer.Serialize(model, ContractlessStandardResolver.Instance));
+                req.Content = new ByteArrayContent(MessagePackSerializer.Serialize(model, ContractlessStandardResolver.Options));
                 req.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(MessagePackFormatterOptions.DefaultContentType);
 
                 using (var response = await _setup.Client.SendAsync(req).ConfigureAwait(false))

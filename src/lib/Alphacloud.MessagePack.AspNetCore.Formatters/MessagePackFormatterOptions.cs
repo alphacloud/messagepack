@@ -42,5 +42,35 @@
         ///     Formatter resolver.
         /// </summary>
         public IFormatterResolver FormatterResolver { get; set; }
+
+        /// <summary>
+        ///     Compression scheme to apply to serialized sequences, <see cref="MessagePackSerializerOptions.Compression" />.
+        /// </summary>
+        public MessagePackCompression Compression { get; set; }
+
+        /// <summary>
+        ///     Serialize using old specification.
+        ///     See <see cref="MessagePackWriter.OldSpec" /> and <see cref="MessagePackSerializerOptions.OldSpec" /> for details.
+        /// </summary>
+        /// <remarks>
+        ///     Reading always supports both new and old specifications.
+        /// </remarks>
+        public bool? OldSpec { get; set; }
+
+        /// <summary>
+        ///     Value indicating whether serialization should omit assembly version, culture and public key token metadata when
+        ///     using the typeless formatter,
+        ///     default is <c>false</c>.
+        ///     See <see cref="MessagePackSerializerOptions.OmitAssemblyVersion" /> for details.
+        /// </summary>
+        public bool OmitAssemblyVersion { get; set; }
+
+        /// <summary>
+        ///     Allows deserializer to instantiate types from an assembly with a different version if a matching version cannot be
+        ///     found,
+        ///     default is <c>false</c>.
+        ///     See <see cref="MessagePackSerializerOptions.AllowAssemblyVersionMismatch" />
+        /// </summary>
+        public bool AllowAssemblyVersionMismatch { get; set; }
     }
 }
