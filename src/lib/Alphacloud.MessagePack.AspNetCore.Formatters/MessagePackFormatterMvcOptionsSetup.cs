@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using global::MessagePack;
+    using global::MessagePack.Resolvers;
     using JetBrains.Annotations;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
@@ -35,11 +36,11 @@
             if (supportedMediaTypes.Length == 0) throw new InvalidOperationException("No supported media types were specified.");
 
             var msgpackOptions = MessagePackSerializerOptions.Standard;
-            if (formatterOptions.FormatterResolver != null) msgpackOptions = msgpackOptions.WithResolver(formatterOptions.FormatterResolver);
+            msgpackOptions = msgpackOptions.WithResolver(formatterOptions.FormatterResolver ?? ContractlessStandardResolver.Instance);
             msgpackOptions = msgpackOptions
                 .WithAllowAssemblyVersionMismatch(formatterOptions.AllowAssemblyVersionMismatch)
                 .WithCompression(formatterOptions.Compression)
-                .WithOldSpec(formatterOptions.OldSpec)
+                .WithOldSpec(formatterOptions.UseOldSpecification)
                 .WithOmitAssemblyVersion(formatterOptions.OmitAssemblyVersion);
 
             options.InputFormatters.Add(new MessagePackInputFormatter(msgpackOptions, supportedMediaTypes));
