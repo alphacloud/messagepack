@@ -25,9 +25,8 @@
         {
             services.AddMessagePack();
 #if NETCOREAPP3_0 || NETCOREAPP3_1
-            services.AddControllersWithViews()
+            services.AddControllers()
                 .AddNewtonsoftJson();
-            services.AddRazorPages();
 #else
             services.AddMvc()
 #if NETCOREAPP2_1
@@ -60,7 +59,6 @@
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
             });
 
 #else

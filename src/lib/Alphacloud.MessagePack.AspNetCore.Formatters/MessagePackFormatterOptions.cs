@@ -55,7 +55,7 @@
         /// <remarks>
         ///     Reading always supports both new and old specifications.
         /// </remarks>
-        public bool? OldSpec { get; set; }
+        public bool? UseOldSpecification { get; set; }
 
         /// <summary>
         ///     Value indicating whether serialization should omit assembly version, culture and public key token metadata when
@@ -67,8 +67,7 @@
 
         /// <summary>
         ///     Allows deserializer to instantiate types from an assembly with a different version if a matching version cannot be
-        ///     found,
-        ///     default is <c>false</c>.
+        ///     found, default is <c>false</c>.
         ///     See <see cref="MessagePackSerializerOptions.AllowAssemblyVersionMismatch" />
         /// </summary>
         public bool AllowAssemblyVersionMismatch { get; set; }
