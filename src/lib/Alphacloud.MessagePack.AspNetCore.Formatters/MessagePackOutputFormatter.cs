@@ -13,17 +13,16 @@
     /// </summary>
     public class MessagePackOutputFormatter : OutputFormatter
     {
-        static readonly byte[] NilBuffer = {MessagePackCode.Nil};
-        readonly IFormatterResolver _resolver;
+        readonly MessagePackSerializerOptions _options;
 
         /// <summary>
         ///     Constructor.
         /// </summary>
-        /// <param name="resolver">Contract resolver.</param>
+        /// <param name="options">Contract resolver.</param>
         /// <param name="mediaTypes">Supported media types.</param>
-        public MessagePackOutputFormatter([NotNull] IFormatterResolver resolver, ICollection<string> mediaTypes)
+        public MessagePackOutputFormatter([NotNull] MessagePackSerializerOptions options, ICollection<string> mediaTypes)
         {
-            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
             if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
 
@@ -34,22 +33,47 @@
         }
 
         /// <inheritdoc />
-        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
+        public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
+#if NETCOREAPP2_1 || NETCOREAPP2_2
             if (context.ObjectType == typeof(object))
             {
                 if (context.Object == null)
                 {
-                    await context.HttpContext.Response.Body.WriteAsync(NilBuffer, 0, 1, context.HttpContext.RequestAborted).ConfigureAwait(false);
+                    context.HttpContext.Response.Body.WriteByte(MessagePackCode.Nil);
+                    return Task.CompletedTask;
                 }
 
-                await AsyncSerializerCache.Instance.Get(context.Object.GetType())
-                    .SerializeAsync(context.HttpContext.Response.Body, context.Object, _resolver)
-                    .ConfigureAwait(false);
+                return MessagePackSerializer.SerializeAsync(context.Object.GetType(), context.HttpContext.Response.Body, context.Object,
+                    _options, context.HttpContext.RequestAborted);
             }
 
-            await AsyncSerializerCache.Instance.Get(context.ObjectType).SerializeAsync(context.HttpContext.Response.Body, context.Object, _resolver)
-                .ConfigureAwait(false);
+            return MessagePackSerializer.SerializeAsync(context.ObjectType, context.HttpContext.Response.Body, context.Object, _options,
+                context.HttpContext.RequestAborted);
+#endif
+
+#if NETCOREAPP3_0 || NETCOREAPP3_1
+            var writer = context.HttpContext.Response.BodyWriter;
+            if (context.ObjectType == typeof(object))
+            {
+                if (context.Object == null)
+                {
+                    var span = writer.GetSpan(1);
+                    span[0] = MessagePackCode.Nil;
+                    writer.Advance(1);
+                }
+                else
+                {
+                    MessagePackSerializer.Serialize(context.Object.GetType(), writer, context.Object, _options, context.HttpContext.RequestAborted);
+                }
+            }
+            else
+            {
+                MessagePackSerializer.Serialize(context.ObjectType, writer, context.Object, _options, context.HttpContext.RequestAborted);
+            }
+
+            return writer.FlushAsync().AsTask();
+#endif
         }
     }
 }

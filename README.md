@@ -39,21 +39,18 @@ Install-Packagge Alphacloud.MessagePack.AspNetCore.Formatters
 
 ### Default configuration
 
-Default configuration uses `application/x-msgpack` media type and `ContractlessStandardResolver`.
+Default configuration uses `application/x-msgpack` as media typeidentificator, `msgpack` as file name extension and `ContractlessStandardResolver`.
 
-#### Full MVC
-
-Add `AddMsgPackFormatters` to your `Startup.cs / ConfigureServices`
+Add `services.AddMessagePack();` call to your `Startup.cs / ConfigureServices`
 ```
 public void ConfigureServices(IServiceCollection services)
 {
-  services.AddMvc()
-    .AddMessagePackFormatters()
-    ;
+    services.AddMessagePack();
+    // ...
 }
 ```
 
-#### MVC Core
+#### MVC Core (ASP.NET Core 2.x)
 
 When using minimal MVC configuration (e.g. in WebAPI service) only base services are added by default.
 You are responsible for configuring each of the service you are going to use.
@@ -62,8 +59,6 @@ You are responsible for configuring each of the service you are going to use.
 unless MVC is configured to reject requests with unsupported media type.
 
 ```
-public void ConfigureServices(IServiceCollection services)
-{
 public void ConfigureServices(IServiceCollection services)
 {
   services.AddMvcCore(options =>
@@ -86,17 +81,20 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Custom configuration
 
-Default configuration can be changed by providing callback to `AddMessagePackFormatters` method.
+Default configuration can be changed by providing callback to `AddMessagePack` method.
 
 Available settings:
 * `MediaTypes` - allows to specify additional media handled by MessagePack formatters. Default is `application/x-msgpack`.
 * `FormatterResolver` - allows to customize serialization, see [MsgPack object serialization](https://github.com/neuecc/MessagePack-CSharp/blob/master/README.md#object-serialization) for details.
 * `FileExtensions` - allows to specify reponse format URL mapping. Default is `msgpack`. See sample project or
 [Microsoft Docs](https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-2.2#response-format-url-mappings) for more information.
+* `Compression` - allows to specify LZ4 compression for messages.
+* `UseOldSpecification` - write message using old specification compatibility mode. Reading will support both old and new specifications. See [Message Pack format specification](https://github.com/msgpack/msgpack/blob/master/spec-old.md).
+* `OmitAssemblyVersion` - don't write assembly version and public key token when using typeless formatter.
+* `AllowAssemblyVersionMismatch` - allows assembly version mistmatch when loading types during deserialization.
 
 ```
-services.AddMvc()
-  .AddMessagePackFormatters(opt =>
+services.AddMessagePack(opt =>
   {
       opt.MediaTypes.Clear();
       opt.MediaTypes.Add("application/x-messagepack");
@@ -109,7 +107,7 @@ services.AddMvc()
 
 # MediaTypeFormatter for HttpClient
 
-[Microsoft.AspNet.WebApi.Client](https://www.nuget.org/packages/Microsoft.AspNet.WebApi.Client/) package contains adds support for formatting and content negotiation to System.Net.Http. 
+[Microsoft.AspNet.WebApi.Client](https://www.nuget.org/packages/Microsoft.AspNet.WebApi.Client/) package contains adds support for formatting and content negotiation to System.Net.Http.
 It allows to add custom content serializers by extending `MediaTypeFormatter` class.
 
 
@@ -132,12 +130,12 @@ var response = await httpClient.PostAsMsgPackAsync(uri, payload, cancellationTok
 ### Reading response
 To deserialize Msgpack response, formatter must be added to `formatters` collection passed to `ReadAsAsync` extension method.
 
-This is **recommeded** method as uses content negotiation.
+This is **recommeded** method as it enables content negotiation.
 ```
 var res = await response.Content.ReadAsAsync<TestModel>(_formatters, CancellationToken.None);
 ```
 
-if you are expecting only MsgPack content, 
+if you are expecting only MsgPack content, use `MsgPackHttpContentExtensions.ReadMsgPackAsAsync()` for `HttpContent`.
 
 # Samples
 
@@ -156,4 +154,3 @@ Sample Postman requests can be found at `src/samples/MessagePack.postman_collect
 * Microsoft.AspNet.WebApi.Client https://www.nuget.org/packages/Microsoft.AspNet.WebApi.Client/
 * Source Link - https://github.com/ctaggart/SourceLink
 * Postman https://www.getpostman.com/downloads/
- 

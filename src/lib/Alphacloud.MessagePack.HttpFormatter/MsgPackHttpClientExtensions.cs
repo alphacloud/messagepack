@@ -17,7 +17,7 @@
         ///     Default formatter (uses <see cref="ContractlessStandardResolver" />).
         /// </summary>
         [PublicAPI]
-        public static readonly MessagePackMediaTypeFormatter DefaultFormatter = new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Instance,
+        public static readonly MessagePackMediaTypeFormatter DefaultFormatter = new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Options,
             new[] {MessagePackMediaTypeFormatter.DefaultMediaType});
 
         /// <summary>

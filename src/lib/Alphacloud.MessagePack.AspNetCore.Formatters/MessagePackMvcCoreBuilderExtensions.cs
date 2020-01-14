@@ -1,4 +1,4 @@
-﻿#if !NETCOREAPP3_0
+﻿#if NETCOREAPP2_1 || NETCOREAPP2_2
 namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
     using System;

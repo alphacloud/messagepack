@@ -22,7 +22,10 @@
         public TestServerSetup()
         {
             Server = new TestServer(Program.CreateWebHostBuilder(Array.Empty<string>())
-                    .UseStartup<Startup>()
+#if NETCOREAPP3_1 || NETCOREAPP3_0
+                .UseTestServer()
+#endif
+                .UseStartup<Startup>()
                 .UseSolutionRelativeContentRoot("Samples/NetCoreWebApi/")
             );
             Client = Server.CreateClient();
@@ -31,7 +34,7 @@
 
             Formatters = new MediaTypeFormatterCollection(new MediaTypeFormatter[]
             {
-                new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Instance, new[] {MessagePackMediaTypeFormatter.DefaultMediaType}),
+                new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Options, new[] {MessagePackMediaTypeFormatter.DefaultMediaType}),
                 new BsonMediaTypeFormatter(),
                 new JsonMediaTypeFormatter()
             });
