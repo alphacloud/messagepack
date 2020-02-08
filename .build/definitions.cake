@@ -139,7 +139,7 @@ public class BuildInfo {
 
     public RepositoryInfo Repository { get; protected set; }
 
-    public Credentials GitHubCredentials { get; protected set; }
+    public string  GitHubToken { get; protected set; }
 
     public Paths Paths { get; protected set; }
 
@@ -164,10 +164,7 @@ public class BuildInfo {
             semVersion.MajorMinorPatch
         );
 
-        var githubCredentials = new Credentials(
-            context.EnvironmentVariable("GITHUB_USER"),
-            context.EnvironmentVariable("GITHUB_PASSWORD")
-        );
+        var gitHubToken = context.EnvironmentVariable("GITHUB_TOKEN");
 
         return new BuildInfo {
             Target = target,
@@ -178,7 +175,7 @@ public class BuildInfo {
             AppVeyorJobId = buildSystem.AppVeyor.Environment.JobId,
             Version = version,
             Repository = RepositoryInfo.Get(buildSystem, settings),
-            GitHubCredentials = githubCredentials,
+            GitHubToken = gitHubToken,
             Settings = settings,
             Paths = new Paths(context),
         };
