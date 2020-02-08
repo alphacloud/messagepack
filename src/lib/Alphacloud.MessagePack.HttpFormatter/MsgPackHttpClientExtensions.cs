@@ -85,7 +85,7 @@
         ///     serialized using MessagePack format.
         /// </summary>
         /// <remarks>
-        ///     This method uses a default instance of <see cref="MessagePackMediaTypeFormatter" /> (
+        ///     This method uses default instance of <see cref="MessagePackMediaTypeFormatter" /> (
         ///     <see cref="ContractlessStandardResolver" />).
         /// </remarks>
         /// <typeparam name="T">The type of <paramref name="value" />.</typeparam>
