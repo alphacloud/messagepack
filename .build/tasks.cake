@@ -135,8 +135,8 @@ Task("UpdateReleaseNotesLink")
     .WithCriteria<BuildInfo>((ctx, build) => build.Repository.IsTagged)
     .Does<BuildInfo>(build =>
     {
-        var releaseNotesUrl = $"https://github.com/{build.Settings.RepoOwner}/{build.Settings.RepoOwner}/releases/tag/{build.Version.Milestone}";
-        Information("Updating ReleaseNotes URL to {1}", releaseNotesUrl);
+        var releaseNotesUrl = $"https://github.com/{build.Settings.RepoOwner}/{build.Settings.RepoName}/releases/tag/{build.Version.Milestone}";
+        Information("Updating ReleaseNotes URL to '{0}'", releaseNotesUrl);
         XmlPoke(build.Paths.BuildPropsFile,
             "/Project/PropertyGroup[@Label=\"Package\"]/PackageReleaseNotes",
             releaseNotesUrl
@@ -185,7 +185,7 @@ Task("CreateRelease")
     .Does<BuildInfo>(build =>
     {
         GitReleaseManagerCreate(
-            build.GitHubCredentials.UserName, build.GitHubCredentials.Password,
+            build.GitHubToken,
             build.Settings.RepoOwner, build.Settings.RepoName,
             new GitReleaseManagerCreateSettings {
               Milestone = build.Version.Milestone,
@@ -199,7 +199,7 @@ Task("CloseMilestone")
     .Does<BuildInfo>(build =>
     {
         GitReleaseManagerClose(
-            build.GitHubCredentials.UserName, build.GitHubCredentials.Password,
+            build.GitHubToken,
             build.Settings.RepoOwner, build.Settings.RepoName,
             build.Version.Milestone
         );
