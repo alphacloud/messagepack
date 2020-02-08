@@ -17,10 +17,8 @@ environment:
   coveralls_repo_token:
     secure: PPV4OTsE0mqUJQ5UXY8dKJnifv+488XNxe7rtyUbiYJNMgvOooUZvGeSxhsOIJmJ
   CAKE_SETTINGS_SKIPVERIFICATION: true
-  GITHUB_USER:
-    secure: 5NfHPjw31vB/XxJqwpHp3cl3n/9F7PTUVXhMIqRSDJE=
-  GITHUB_PASSWORD:
-    secure: 9gArAAMTQRHIsSZcJ+87GM+kaSfsBlouuFHtBR1hWBY=
+  GITHUB_TOKEN:
+    secure: SakrMxbclSjNzFQxv8sA35OhulfvNm9VqHBEOgQrebPaF/Bv7AmZRsT8/YEfSQED
 
 install:
   - ps: ./dotnet-install.ps1  -Version 3.1.101 -InstallDir "C:\Program Files\dotnet"
