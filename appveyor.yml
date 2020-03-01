@@ -21,10 +21,10 @@ environment:
     secure: SakrMxbclSjNzFQxv8sA35OhulfvNm9VqHBEOgQrebPaF/Bv7AmZRsT8/YEfSQED
 
 install:
-  - ps: ./dotnet-install.ps1  -Version 3.1.101 -InstallDir "C:\Program Files\dotnet"
-  - ps: ./dotnet-install.ps1  -Version 3.0.102 -InstallDir "C:\Program Files\dotnet"
-  - ps: ./dotnet-install.ps1  -Version 2.2.207 -InstallDir "C:\Program Files\dotnet"
-  - ps: ./dotnet-install.ps1  -Version 2.1.607 -InstallDir "C:\Program Files\dotnet"
+  - ps: ./dotnet-install.ps1  -Version 3.1.102 -InstallDir "C:\Program Files\dotnet"
+  - ps: ./dotnet-install.ps1  -Version 3.0.103 -InstallDir "C:\Program Files\dotnet"
+  - ps: ./dotnet-install.ps1  -Version 2.2.402 -InstallDir "C:\Program Files\dotnet"
+  - ps: ./dotnet-install.ps1  -Version 2.1.804 -InstallDir "C:\Program Files\dotnet"
 
 build_script:
   - ps: ./build.ps1
