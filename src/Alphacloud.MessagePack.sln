@@ -29,12 +29,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Functional", "tests\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alphacloud.MessagePack.HttpFormatter", "lib\Alphacloud.MessagePack.HttpFormatter\Alphacloud.MessagePack.HttpFormatter.csproj", "{6586E1D3-619A-41E7-B005-DAA990AE39A1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\build\_build.csproj", "{130747BA-9EBD-451B-B6B5-9E98785C9373}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{130747BA-9EBD-451B-B6B5-9E98785C9373}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{130747BA-9EBD-451B-B6B5-9E98785C9373}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC25AD93-06E1-4213-85A9-D7F80A95F088}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC25AD93-06E1-4213-85A9-D7F80A95F088}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC25AD93-06E1-4213-85A9-D7F80A95F088}.Release|Any CPU.ActiveCfg = Release|Any CPU
