@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageTags>messagepack msgpack webapi formatter serialization alphacloud</PackageTags>
-    <Description>MessagePack formatters for WebApi client</Description>
+    <PackageTags>messagepack msgpack webapi formatter serialization webapi-client alphacloud</PackageTags>
+    <Description>MessagePack formatters for WebApi client (Microsoft.AspNet.WebApi.Client).</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,11 +14,11 @@
   </ItemGroup>
 
   <ItemGroup Label="Package References">
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="All" />
-    <PackageReference Include="MessagePack" Version="[2.1.90, 3.0.0)" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" PrivateAssets="All" />
+    <PackageReference Include="MessagePack" Version="[2.1.115, 3.0.0)" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="[5.2.7, 6.0.0)" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
 </Project>
