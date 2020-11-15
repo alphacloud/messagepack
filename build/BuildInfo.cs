@@ -2,6 +2,7 @@
 {
     using System;
     using Nuke.Common;
+    using Nuke.Common.CI.AppVeyor;
     using Nuke.Common.Tools.GitVersion;
 
     // params
@@ -14,7 +15,7 @@
         //public string Target { get; protected set; }
         //public string Config { get; protected set; }
 
-        public Configuration Configuration { get; protected set;}
+        public Configuration Configuration { get; protected set; }
 
         public bool IsLocal { get; protected set; }
         public string AppVeyorJobId { get; protected set; }
@@ -47,7 +48,7 @@
             {
                 Configuration = buildBase.Configuration,
                 IsLocal = NukeBuild.IsLocalBuild,
-                AppVeyorJobId = Environment.GetEnvironmentVariable("APPVEYOR_JOB_ID"),
+                AppVeyorJobId = AppVeyor.Instance.JobId,
                 Version = version,
                 Repository = RepositoryInfo.Get(buildBase, settings),
                 GitHubToken = gitHubToken,
@@ -56,3 +57,4 @@
             };
         }
     }
+}

@@ -1,6 +1,7 @@
 ﻿namespace _build
 {
     using System;
+    using Nuke.Common.CI.AppVeyor;
 
 
     public class RepositoryInfo {
@@ -12,13 +13,16 @@
         public bool IsTagged { get; protected set; }
 
         public static RepositoryInfo Get(BuildBase buildSystem, ProjectSettings settings) {
+
+            
+
             return new RepositoryInfo {
-                IsPullRequest = buildSystem.AppVeyor.Environment.PullRequest.IsPullRequest,
-                IsDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", buildSystem.AppVeyor.Environment.Repository.Branch),
-                IsReleaseBranch = buildSystem.AppVeyor.Environment.Repository.Branch.IndexOf("releases/", StringComparison.OrdinalIgnoreCase) >= 0
-                    || buildSystem.AppVeyor.Environment.Repository.Branch.IndexOf("hotfixes/", StringComparison.OrdinalIgnoreCase) >= 0,
-                IsTagged = buildSystem.AppVeyor.Environment.Repository.Tag.IsTag,
-                IsMain = StringComparer.OrdinalIgnoreCase.Equals($"{settings.RepoOwner}/{settings.RepoName}", buildSystem.AppVeyor.Environment.Repository.Name),
+                IsPullRequest = AppVeyor.Instance.PullRequestNumber > 0,
+                IsDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", AppVeyor.Instance.RepositoryBranch),
+                IsReleaseBranch = AppVeyor.Instance.RepositoryBranch.IndexOf("releases/", StringComparison.OrdinalIgnoreCase) >= 0
+                    || AppVeyor.Instance.RepositoryBranch.IndexOf("hotfixes/", StringComparison.OrdinalIgnoreCase) >= 0,
+                IsTagged = AppVeyor.Instance.RepositoryTag,
+                IsMain = StringComparer.OrdinalIgnoreCase.Equals($"{settings.RepoOwner}/{settings.RepoName}", AppVeyor.Instance.RepositoryName),
             };
         }
     }

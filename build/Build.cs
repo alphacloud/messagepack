@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using _build;
 using Nuke.Common;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
@@ -24,7 +25,7 @@ public abstract class BuildBase: NukeBuild
     [GitRepository] public readonly GitRepository GitRepository;
     [GitVersion] public readonly GitVersion GitVersion;
 
-//    public AbsolutePath SourceDirectory => RootDirectory / "src";
+    //public AbsolutePath SourceDirectory => RootDirectory / "src";
 //    public AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
 
 }
@@ -33,6 +34,8 @@ public abstract class BuildBase: NukeBuild
 [UnsetVisualStudioEnvironmentVariables]
 class Build : BuildBase
 {
+    BuildInfo BuildInfo;
+
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
     ///   - JetBrains Rider            https://nuke.build/rider
@@ -45,15 +48,14 @@ class Build : BuildBase
     protected override void OnBuildInitialized()
     {
         base.OnBuildInitialized();
-
-
+        BuildInfo = BuildInfo.Get(this, new ProjectSettings("alphacloud", "messagepack", "Alphacloud.MessagePack.sln"));
     }
 
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
+            BuildInfo.S SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             EnsureCleanDirectory(ArtifactsDirectory);
         });
 

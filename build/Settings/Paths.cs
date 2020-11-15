@@ -1,7 +1,11 @@
 ﻿namespace _build
 {
+    using Nuke.Common;
+    using Nuke.Common.IO;
+
+
     public class Paths {
-        public DirectoryPath RootDir { get; }
+        public AbsolutePath RootDir { get; }
         public string SrcDir { get; set; }
         public string ArtifactsDir {get; set; }
         public string TestCoverageOutputFile { get; set; }
@@ -14,7 +18,7 @@
 
         public Paths(BuildBase context)
         {
-            RootDir = context.MakeAbsolute(context.Directory("./"));
+            RootDir = NukeBuild.RootDirectory;
             SrcDir = "./src";
             ArtifactsDir = "./artifacts";
             TestCoverageOutputFile = ArtifactsDir + "/OpenCover.xml";
@@ -22,6 +26,7 @@
             PackagesDir = ArtifactsDir + "/packages";
             BuildPropsFile = SrcDir + "/Directory.Build.props";
             TestsRootDir = SrcDir + "/tests";
+            SamplesRootDir = SrcDir + "/Samples";
             CommonAssemblyVersionFile = SrcDir + "/common/AssemblyVersion.cs";
         }
 
