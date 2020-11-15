@@ -14,9 +14,24 @@ using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+
+public abstract class BuildBase: NukeBuild
+{
+    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
+    public readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+    [Solution] public readonly Solution Solution;
+    [GitRepository] public readonly GitRepository GitRepository;
+    [GitVersion] public readonly GitVersion GitVersion;
+
+//    public AbsolutePath SourceDirectory => RootDirectory / "src";
+//    public AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
+
+}
+
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
-class Build : NukeBuild
+class Build : BuildBase
 {
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
@@ -26,15 +41,13 @@ class Build : NukeBuild
 
     public static int Main () => Execute<Build>(x => x.Compile);
 
-    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    /// <inheritdoc />
+    protected override void OnBuildInitialized()
+    {
+        base.OnBuildInitialized();
 
-    [Solution] readonly Solution Solution;
-    [GitRepository] readonly GitRepository GitRepository;
-    [GitVersion] readonly GitVersion GitVersion;
 
-    AbsolutePath SourceDirectory => RootDirectory / "src";
-    AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
+    }
 
     Target Clean => _ => _
         .Before(Restore)
@@ -44,12 +57,59 @@ class Build : NukeBuild
             EnsureCleanDirectory(ArtifactsDirectory);
         });
 
+    Target SetVersion => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+    Target UpdateAppVeyorBuildNumber => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
     Target Restore => _ => _
+        .After(Clean)
         .Executes(() =>
         {
             DotNetRestore(s => s
                 .SetProjectFile(Solution));
         });
+
+    Target RunXunitTests => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+    Target CleanPreviousTestsResults => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+    Target GenerateCoverageReport => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+    Target UploadCoverage => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+
+    Target RunUniteTests => _ => _
+        .DependsOn(Compile, CleanPreviousTestsResults, RunXunitTests, GenerateCoverageReport, UploadCoverage)
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+
 
     Target Compile => _ => _
         .DependsOn(Restore)
@@ -63,5 +123,25 @@ class Build : NukeBuild
                 .SetInformationalVersion(GitVersion.InformationalVersion)
                 .EnableNoRestore());
         });
+
+
+    Target CreateNugetPackages => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+    Target CreateRelease => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
+    Target CloseMilestone => _ => _
+        .Executes(() =>
+        {
+            throw new NotImplementedException();
+        });
+
 
 }

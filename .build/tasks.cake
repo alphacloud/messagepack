@@ -1,6 +1,6 @@
 // TASKS
 
-Task("CleanAll")
+Task("CleanAll") // - Clean
     .Does<BuildInfo>(build =>
     {
         CleanDirectories($"{build.Paths.SrcDir}/**/obj");
