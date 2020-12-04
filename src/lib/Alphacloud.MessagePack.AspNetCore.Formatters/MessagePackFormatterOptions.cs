@@ -1,5 +1,6 @@
 ﻿namespace Alphacloud.MessagePack.AspNetCore.Formatters
 {
+    using System;
     using System.Collections.Generic;
     using global::MessagePack;
     using JetBrains.Annotations;
@@ -28,7 +29,7 @@
         public HashSet<string> MediaTypes { get; } = new HashSet<string> {DefaultContentType};
 
         /// <summary>
-        ///     Associated format mappings (default <see cref="DefaultFileExtension" />).
+        ///     Associated format mappings (default <see cref="DefaultFileExtension" />) (case-insensitive).
         ///     <seealso cref="MvcOptions.FormatterMappings" />
         /// </summary>
         /// <remarks>
@@ -36,7 +37,7 @@
         ///     https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-2.2#response-format-url-mappings
         ///     for further details.
         /// </remarks>
-        public HashSet<string> FileExtensions { get; } = new HashSet<string> {DefaultFileExtension};
+        public HashSet<string> FileExtensions { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {DefaultFileExtension};
 
         /// <summary>
         ///     Formatter resolver.
