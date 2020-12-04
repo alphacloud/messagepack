@@ -22,7 +22,7 @@
         public TestServerSetup()
         {
             Server = new TestServer(Program.CreateWebHostBuilder(Array.Empty<string>())
-#if NETCOREAPP3_1 || NETCOREAPP3_0
+#if NETCOREAPP3_1 || NETCOREAPP3_0 || NET5_0
                 .UseTestServer()
 #endif
                 .UseStartup<Startup>()

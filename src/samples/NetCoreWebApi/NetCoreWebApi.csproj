@@ -27,6 +27,10 @@
     <PackageReference Include=" Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.9" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
+    <PackageReference Include=" Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.AspNetCore.Formatters\Alphacloud.MessagePack.AspNetCore.Formatters.csproj" />
   </ItemGroup>

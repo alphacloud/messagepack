@@ -52,7 +52,7 @@
                 context.HttpContext.RequestAborted);
 #endif
 
-#if NETCOREAPP3_0 || NETCOREAPP3_1
+#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
             var writer = context.HttpContext.Response.BodyWriter;
             if (context.ObjectType == typeof(object))
             {
