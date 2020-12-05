@@ -19,6 +19,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="services" /> is <see langword="null" /></exception>
         public static void AddMessagePack(this IServiceCollection services, Action<MessagePackFormatterOptions>? setup = null)
         {
+            if (services == null) throw new ArgumentNullException(nameof(services));
             services.Configure<MessagePackFormatterOptions>(o =>
             {
                 if (o.FormatterResolver == null) o.FormatterResolver = ContractlessStandardResolver.Instance;

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using global::MessagePack;
-    using JetBrains.Annotations;
     using Microsoft.AspNetCore.Mvc.Formatters;
 
 
@@ -18,24 +17,27 @@
         /// <summary>
         ///     Constructor.
         /// </summary>
-        /// <param name="options">Contract resolver.</param>
+        /// <param name="options">Formatter options.</param>
         /// <param name="mediaTypes">Supported media types.</param>
-        public MessagePackOutputFormatter([NotNull] MessagePackSerializerOptions options, ICollection<string> mediaTypes)
+        /// <exception cref="T:System.ArgumentNullException">
+        ///     <paramref name="options" /> or <paramref name="mediaTypes" /> is
+        ///     <c>null</c>.
+        /// </exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="mediaTypes" /> collection is empty.</exception>
+        public MessagePackOutputFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
             if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
 
-            foreach (var mediaType in mediaTypes)
-            {
-                SupportedMediaTypes.Add(mediaType);
-            }
+            foreach (var mediaType in mediaTypes) SupportedMediaTypes.Add(mediaType);
         }
 
+#if NETCOREAPP2_1 || NETCOREAPP2_2
         /// <inheritdoc />
+        /// <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
-#if NETCOREAPP2_1 || NETCOREAPP2_2
             if (context.ObjectType == typeof(object))
             {
                 if (context.Object == null)
@@ -50,9 +52,11 @@
 
             return MessagePackSerializer.SerializeAsync(context.ObjectType, context.HttpContext.Response.Body, context.Object, _options,
                 context.HttpContext.RequestAborted);
-#endif
-
-#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+        }
+#elif NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+        /// <inheritdoc />
+        public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
+        {
             var writer = context.HttpContext.Response.BodyWriter;
             if (context.ObjectType == typeof(object))
             {
@@ -73,7 +77,9 @@
             }
 
             return writer.FlushAsync().AsTask();
-#endif
         }
+#else
+#error Runtime not supported
+#endif
     }
 }

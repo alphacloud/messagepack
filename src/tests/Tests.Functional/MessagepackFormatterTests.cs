@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Alphacloud.MessagePack.AspNetCore.Formatters;
-    using Alphacloud.MessagePack.WebApi.Client;
+    using Alphacloud.MessagePack.HttpFormatter;
     using FluentAssertions;
     using MessagePack;
     using MessagePack.Resolvers;
