@@ -17,7 +17,7 @@
         ///     Add MsgPack (application/x-message) input and output formatters.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="services" /> is <see langword="null" /></exception>
-        public static void AddMessagePack(this IServiceCollection services, Action<MessagePackFormatterOptions> setup = null)
+        public static void AddMessagePack(this IServiceCollection services, Action<MessagePackFormatterOptions>? setup = null)
         {
             services.Configure<MessagePackFormatterOptions>(o =>
             {

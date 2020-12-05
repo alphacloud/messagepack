@@ -8,6 +8,7 @@
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
     <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
 

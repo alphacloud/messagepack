@@ -20,7 +20,6 @@
     {
         readonly TestServerSetup _setup;
 
-        /// <inheritdoc />
         public MessagePackFormatterTests(TestServerSetup setup)
         {
             _setup = setup ?? throw new ArgumentNullException(nameof(setup));
@@ -44,7 +43,7 @@
         {
             var response = await _setup.Client.GetAsync(new Uri($"/api/values/format/20.{format}", UriKind.Relative));
             response.EnsureSuccessStatusCode();
-            response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
+            response.Content.Headers.ContentType!.MediaType.Should().Be(mediaType);
         }
 
         [Fact]
@@ -59,29 +58,23 @@
         [Fact]
         public async Task CanGetUsingWebApiClient()
         {
-            using (var response = await _setup.Client.GetAsync(new Uri("/api/values", UriKind.Relative)))
-            {
-                response.EnsureSuccessStatusCode();
-                var res = await response.Content.ReadAsAsync<IEnumerable<TestModel>>(_setup.Formatters)
-                    .ConfigureAwait(false);
-                res.Should().OnlyContain(x => x.Id == 1 || x.Id == 2);
-            }
+            using var response = await _setup.Client.GetAsync(new Uri("/api/values", UriKind.Relative));
+            response.EnsureSuccessStatusCode();
+            var res = await response.Content.ReadAsAsync<IEnumerable<TestModel>>(_setup.Formatters)
+                .ConfigureAwait(false);
+            res.Should().OnlyContain(x => x.Id == 1 || x.Id == 2);
         }
 
 
         [Fact]
         public async Task CanGetJson()
         {
-            using (var req = new HttpRequestMessage(HttpMethod.Get, new Uri("/api/values", UriKind.Relative)))
-            {
-                req.Headers.Accept.Clear();
-                req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
-                using (var response = await _setup.Client.SendAsync(req).ConfigureAwait(false))
-                {
-                    response.EnsureSuccessStatusCode();
-                    response.Content.Headers.ContentType.MediaType.Should().Be("application/json");
-                }
-            }
+            using var req = new HttpRequestMessage(HttpMethod.Get, new Uri("/api/values", UriKind.Relative));
+            req.Headers.Accept.Clear();
+            req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
+            using var response = await _setup.Client.SendAsync(req).ConfigureAwait(false);
+            response!.EnsureSuccessStatusCode();
+            response.Content.Headers.ContentType!.MediaType.Should().Be("application/json");
         }
 
         [Fact]
@@ -89,17 +82,13 @@
         {
             var model = new TestModel(10);
 
-            using (var req = new HttpRequestMessage(HttpMethod.Post, new Uri("/api/values", UriKind.Relative)))
-            {
-                req.Content = new ByteArrayContent(MessagePackSerializer.Serialize(model, ContractlessStandardResolver.Options));
-                req.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(MessagePackFormatterOptions.DefaultContentType);
+            using var req = new HttpRequestMessage(HttpMethod.Post, new Uri("/api/values", UriKind.Relative));
+            req.Content = new ByteArrayContent(MessagePackSerializer.Serialize(model, ContractlessStandardResolver.Options));
+            req.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(MessagePackFormatterOptions.DefaultContentType);
 
-                using (var response = await _setup.Client.SendAsync(req).ConfigureAwait(false))
-                {
-                    var res = await ReadData<TestModel>(response).ConfigureAwait(false);
-                    res.Should().BeEquivalentTo(model);
-                }
-            }
+            using var response = await _setup.Client.SendAsync(req).ConfigureAwait(false);
+            var res = await ReadData<TestModel>(response).ConfigureAwait(false);
+            res.Should().BeEquivalentTo(model);
         }
 
         [Fact]
@@ -108,12 +97,10 @@
             var testModel = new TestModel(20);
             var uri = new Uri("/api/values", UriKind.Relative);
 
-            using (var response = await _setup.Client.PostAsMsgPackAsync(uri, testModel, CancellationToken.None).ConfigureAwait(false))
-            {
-                response.EnsureSuccessStatusCode();
-                var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
-                res.Should().BeEquivalentTo(testModel);
-            }
+            using var response = await _setup.Client.PostAsMsgPackAsync(uri, testModel, CancellationToken.None).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
+            res.Should().BeEquivalentTo(testModel);
         }
     }
 }

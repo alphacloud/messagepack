@@ -34,7 +34,7 @@
         /// </summary>
         /// <remarks>
         ///     See
-        ///     https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-2.2#response-format-url-mappings
+        ///     https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-5.0#response-format-url-mappings
         ///     for further details.
         /// </remarks>
         public HashSet<string> FileExtensions { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {DefaultFileExtension};
@@ -42,7 +42,7 @@
         /// <summary>
         ///     Formatter resolver.
         /// </summary>
-        public IFormatterResolver FormatterResolver { get; set; }
+        public IFormatterResolver? FormatterResolver { get; set; }
 
         /// <summary>
         ///     Compression scheme to apply to serialized sequences, <see cref="MessagePackSerializerOptions.Compression" />.

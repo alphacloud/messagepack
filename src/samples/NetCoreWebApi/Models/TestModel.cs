@@ -1,4 +1,5 @@
-﻿namespace NetCoreWebApi.Models
+﻿#pragma warning disable 8618
+namespace NetCoreWebApi.Models
 {
     public class TestModel
     {

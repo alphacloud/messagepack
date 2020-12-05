@@ -17,7 +17,7 @@ namespace Alphacloud.MessagePack.AspNetCore.Formatters
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="builder" /> is <see langword="null" /></exception>
         [Obsolete("Use IServiceCollection.AddMassagePack")]
-        public static IMvcCoreBuilder AddMessagePackFormatters(this IMvcCoreBuilder builder, Action<MessagePackFormatterOptions> setup = null)
+        public static IMvcCoreBuilder AddMessagePackFormatters(this IMvcCoreBuilder builder, Action<MessagePackFormatterOptions>? setup = null)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             builder.Services.AddMessagePack(setup);
