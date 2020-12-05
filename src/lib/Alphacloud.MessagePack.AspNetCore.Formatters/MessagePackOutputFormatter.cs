@@ -33,7 +33,7 @@
             foreach (var mediaType in mediaTypes) SupportedMediaTypes.Add(mediaType);
         }
 
-#if NETCOREAPP2_1 || NETCOREAPP2_2
+#if NETCOREAPP2_1
         /// <inheritdoc />
         /// <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
@@ -53,7 +53,7 @@
             return MessagePackSerializer.SerializeAsync(context.ObjectType, context.HttpContext.Response.Body, context.Object, _options,
                 context.HttpContext.RequestAborted);
         }
-#elif NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+#elif NETCOREAPP3_1 || NET5_0
         /// <inheritdoc />
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
