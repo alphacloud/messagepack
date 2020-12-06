@@ -5,7 +5,7 @@
     using System.Net.Http.Formatting;
     using System.Net.Http.Headers;
     using Alphacloud.MessagePack.AspNetCore.Formatters;
-    using Alphacloud.MessagePack.WebApi.Client;
+    using Alphacloud.MessagePack.HttpFormatter;
     using MessagePack.Resolvers;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;
@@ -18,11 +18,11 @@
         public HttpClient Client { get; }
         public TestServer Server { get; }
 
-        /// <inheritdoc />
+        
         public TestServerSetup()
         {
             Server = new TestServer(Program.CreateWebHostBuilder(Array.Empty<string>())
-#if NETCOREAPP3_1 || NETCOREAPP3_0
+#if NETCOREAPP3_1 || NET5_0
                 .UseTestServer()
 #endif
                 .UseStartup<Startup>()
@@ -43,7 +43,7 @@
         /// <inheritdoc />
         public void Dispose()
         {
-            Server?.Dispose();
+            Server.Dispose();
             Client?.Dispose();
         }
     }

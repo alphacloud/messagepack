@@ -6,6 +6,9 @@
     using Models;
 
 
+    /// <summary>
+    ///     Sample controller.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
@@ -19,6 +22,9 @@
         }
 
         // GET api/values
+        /// <summary>
+        ///     Retrieve sample models.
+        /// </summary>
         [HttpGet]
         public ActionResult<IEnumerable<TestModel>> Get()
         {
@@ -26,12 +32,21 @@
         }
 
         // GET api/values/5
+        /// <summary>
+        ///     Retrieve sample model by id.
+        /// </summary>
+        /// <param name="id">Id.</param>
         [HttpGet("{id}")]
         public ActionResult<TestModel> Get(int id)
         {
             return new TestModel(id);
         }
 
+        /// <summary>
+        ///     Retrieve model, specify response format using file extension-like style.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [FormatFilter]
         [HttpGet("format/{id}.{format?}")]
         public ActionResult<TestModel> GetWithFormat(int id)

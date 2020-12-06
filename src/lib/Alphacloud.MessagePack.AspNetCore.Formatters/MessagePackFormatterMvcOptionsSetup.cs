@@ -17,14 +17,15 @@
     {
         readonly IOptions<MessagePackFormatterOptions> _messagePackFormatterOptions;
 
-        /// <inheritdoc />
-        public MessagePackFormatterMvcOptionsSetup([NotNull] IOptions<MessagePackFormatterOptions> messagePackFormatterOptions)
+        public MessagePackFormatterMvcOptionsSetup(IOptions<MessagePackFormatterOptions> messagePackFormatterOptions)
         {
             _messagePackFormatterOptions = messagePackFormatterOptions ??
                 throw new ArgumentNullException(nameof(messagePackFormatterOptions));
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">No supported media types were specified.</exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="options"/> is <see langword="null"/></exception>
         public void Configure(MvcOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));

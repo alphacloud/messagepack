@@ -1,4 +1,4 @@
-﻿namespace Alphacloud.MessagePack.WebApi.Client
+﻿namespace Alphacloud.MessagePack.HttpFormatter
 {
     using System;
     using System.Net.Http;

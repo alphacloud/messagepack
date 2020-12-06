@@ -1,4 +1,4 @@
-﻿namespace Alphacloud.MessagePack.WebApi.Client
+﻿namespace Alphacloud.MessagePack.HttpFormatter
 {
     using System;
     using System.Collections.Generic;
@@ -21,19 +21,26 @@
     public class MessagePackMediaTypeFormatter : MediaTypeFormatter
     {
         static readonly byte[] NilBuffer = {MessagePackCode.Nil};
-        static readonly object _lock = new object();
-        static readonly IDictionary<Type, object> _valueTypeDefaults = new Dictionary<Type, object>(16);
+        static readonly object Lock = new object();
+        static readonly IDictionary<Type, object?> ValueTypeDefaults = new Dictionary<Type, object?>(16);
 
         /// <summary>
         ///     MessagePack media type.
         /// </summary>
         [PublicAPI] public const string DefaultMediaType = "application/x-msgpack";
 
-        [NotNull] readonly MessagePackSerializerOptions _options;
-        [NotNull] ReadableTypesCache _readableTypesCache;
+        readonly MessagePackSerializerOptions _options;
+        ReadableTypesCache _readableTypesCache;
 
-        /// <inheritdoc />
-        public MessagePackMediaTypeFormatter([NotNull] MessagePackSerializerOptions options, [NotNull] ICollection<string> mediaTypes)
+        /// <summary>
+        ///     Constructor.
+        /// </summary>
+        /// <param name="options">Formatter options.</param>
+        /// <param name="mediaTypes">Supported media types.</param>
+        /// <exception cref="T:System.ArgumentNullException">
+        ///     <paramref name="options" /> or <paramref name="mediaTypes" /> is <c>null</c>.
+        /// </exception>
+        public MessagePackMediaTypeFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
         {
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -46,7 +53,8 @@
         }
 
         /// <inheritdoc />
-        public MessagePackMediaTypeFormatter([NotNull] MessagePackMediaTypeFormatter formatter)
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="formatter"/> is <c>null</c></exception>
+        public MessagePackMediaTypeFormatter(MessagePackMediaTypeFormatter formatter)
             : base(formatter)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
@@ -55,12 +63,14 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         public override bool CanReadType(Type type)
         {
             return _readableTypesCache.CanRead(type);
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         public override bool CanWriteType(Type type)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
@@ -68,14 +78,15 @@
         }
 
         /// <inheritdoc />
-        public override async Task<object> ReadFromStreamAsync(
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <see langword="null"/></exception>
+        public override async Task<object?> ReadFromStreamAsync(
             Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (readStream == null) throw new ArgumentNullException(nameof(readStream));
             if (content == null) throw new ArgumentNullException(nameof(content));
 
-            long? contentLength = content?.Headers?.ContentLength;
+            long? contentLength = content.Headers.ContentLength;
             if (contentLength.HasValue && contentLength.GetValueOrDefault() == 0L)
             {
                 return GetDefaultForType(type);
@@ -87,18 +98,18 @@
                     .ConfigureAwait(false);
                 return result;
             }
+            // ReSharper disable once CatchAllClause
             catch (Exception exception)
             {
-                if (formatterLogger == null) throw;
-
                 formatterLogger.LogError(string.Empty, exception);
                 return GetDefaultForType(type);
             }
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="type"/> or <paramref name="writeStream"/>is <c>null</c>.</exception>
         public override Task WriteToStreamAsync(
-            Type type, object value, Stream writeStream, HttpContent content,
+            Type type, object? value, Stream writeStream, HttpContent content,
             TransportContext transportContext, CancellationToken cancellationToken)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
@@ -114,17 +125,17 @@
             return MessagePackSerializer.SerializeAsync(type, writeStream, value, _options, cancellationToken);
         }
 
-        static object GetDefaultForType(Type type)
+        static object? GetDefaultForType(Type type)
         {
             if (!type.IsValueType) return null;
 
             // ReSharper disable once InconsistentlySynchronizedField
-            if (_valueTypeDefaults.TryGetValue(type, out var def)) return def;
-            lock (_lock)
+            if (ValueTypeDefaults.TryGetValue(type, out var def)) return def;
+            lock (Lock)
             {
-                if (_valueTypeDefaults.TryGetValue(type, out def)) return def;
+                if (ValueTypeDefaults.TryGetValue(type, out def)) return def;
                 def = Activator.CreateInstance(type);
-                _valueTypeDefaults[type] = def;
+                ValueTypeDefaults[type] = def;
                 return def;
             }
         }
