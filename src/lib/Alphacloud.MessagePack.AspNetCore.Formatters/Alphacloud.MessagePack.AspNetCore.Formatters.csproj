@@ -28,7 +28,7 @@
 
   <ItemGroup Label="Package References">
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" PrivateAssets="All" />
-    <PackageReference Include="MessagePack" Version="[2.2.60, 3.0.0)" />
+    <PackageReference Include="MessagePack" Version="[2.2.85, 3.0.0)" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
