@@ -23,7 +23,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="System.IO.Pipelines" Version="5.0.0" />
+    <PackageReference Include="System.IO.Pipelines" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup Label="Package References">
