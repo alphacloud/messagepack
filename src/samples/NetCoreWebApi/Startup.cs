@@ -1,10 +1,11 @@
 ﻿namespace NetCoreWebApi
 {
     using Alphacloud.MessagePack.AspNetCore.Formatters;
+    using MessagePack;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
-#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET5_0
     using Microsoft.Extensions.Hosting;
 #endif
     using Microsoft.Extensions.Configuration;
@@ -23,24 +24,26 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMessagePack();
-#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+            services.AddMessagePack(options =>
+            {
+                options.Compression = MessagePackCompression.Lz4Block;
+
+            });
+#if NETCOREAPP3_1 || NET5_0
             services.AddControllers()
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson()
 #else
             services.AddMvc()
 #if NETCOREAPP2_1
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-#elif NETCOREAPP2_2
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+#endif
 #endif
                 ;
-#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
-#if NETCOREAPP3_0 || NETCOREAPP3_1|| NET5_0
+#if NETCOREAPP3_1|| NET5_0
             IWebHostEnvironment env
 #else
             IHostingEnvironment env
@@ -51,9 +54,9 @@
             {
                 app.UseDeveloperExceptionPage();
             }
-#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET5_0
             app.UseRouting();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
