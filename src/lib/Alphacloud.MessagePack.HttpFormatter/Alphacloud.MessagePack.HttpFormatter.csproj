@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Label="Build">
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net5</TargetFrameworks>
-  </PropertyGroup>
-
   <PropertyGroup Label="Package">
     <PackageTags>messagepack msgpack webapi formatter serialization webapi-client alphacloud</PackageTags>
     <Description>MessagePack formatters for WebApi client (Microsoft.AspNet.WebApi.Client).</Description>
@@ -17,7 +13,7 @@
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
   </ItemGroup>
 
