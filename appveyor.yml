@@ -23,9 +23,12 @@ environment:
 install:
   - ps: ./dotnet-install.ps1  -Version 3.1.403 -InstallDir "C:\Program Files\dotnet"
   - ps: ./dotnet-install.ps1  -Version 2.1.804 -InstallDir "C:\Program Files\dotnet"
+  - ps: ./dotnet-install.ps1 -Version 6.0.100-preview.3.21202.5 -InstallDir "C:\Program Files\dotnet"
+  - ps: dotnet new tool-manifest
+  - ps: dotnet tool install Cake.Tool --version 1.1.0
 
 build_script:
-  - ps: ./build.ps1
+  - ps: dotnet-cake
 
 test: off
 
