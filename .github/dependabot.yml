@@ -1,0 +1,36 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  target-branch: develop
+  ignore:
+  - dependency-name: JetBrains.Annotations
+    versions:
+    - 2021.1.0
+  - dependency-name: Microsoft.AspNetCore.TestHost
+    versions:
+    - 5.0.3
+    - 5.0.4
+    - 5.0.5
+  - dependency-name: Microsoft.AspNetCore.Mvc.NewtonsoftJson
+    versions:
+    - 5.0.3
+    - 5.0.4
+    - 5.0.5
+  - dependency-name: Microsoft.NET.Test.Sdk
+    versions:
+    - 16.9.1
+    - 16.9.4
+  - dependency-name: Serilog.AspNetCore
+    versions:
+    - 4.0.0
+    - 4.1.0
+  - dependency-name: Moq
+    versions:
+    - 4.16.1
+  - dependency-name: Serilog.Sinks.Seq
+    versions:
+    - 5.0.0
