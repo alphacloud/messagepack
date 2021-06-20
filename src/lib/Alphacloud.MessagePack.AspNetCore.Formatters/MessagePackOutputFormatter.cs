@@ -53,7 +53,7 @@
             return MessagePackSerializer.SerializeAsync(context.ObjectType, context.HttpContext.Response.Body, context.Object, _options,
                 context.HttpContext.RequestAborted);
         }
-#elif NETCOREAPP3_1 || NET5_0
+#elif NETCOREAPP3_1 || NET5_0 || NET6_0
         /// <inheritdoc />
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {

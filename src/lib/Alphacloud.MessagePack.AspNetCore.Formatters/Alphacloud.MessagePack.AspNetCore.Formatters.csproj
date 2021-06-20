@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup Label="Build">
+    <TargetFrameworks>$(ApplicationTargetFrameworks)</TargetFrameworks>
+  </PropertyGroup>
+
   <PropertyGroup Label="Package">
     <PackageTags>messagepack msgpack mvc-core formatter alphacloud</PackageTags>
     <Description>MessagePack formatters for ASP.NET Core MVC</Description>
@@ -18,12 +22,14 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="System.IO.Pipelines" Version="4.7.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="System.IO.Pipelines" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup Label="Package References">
