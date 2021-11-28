@@ -14,12 +14,6 @@
     <Compile Include="..\Alphacloud.MessagePack.HttpFormatter\ReadableTypesCache.cs" Link="Internal\ReadableTypesCache.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="[2.1.0, 2.2.0)" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="[2.1.0, 2.2.0)" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
@@ -33,9 +27,8 @@
   </ItemGroup>
 
   <ItemGroup Label="Package References">
-    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
-    <PackageReference Include="MessagePack" Version="[2.3.75, 3.0.0)" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+    <PackageReference Include="MessagePack" Version="[2.3.85, 3.0.0)" />
   </ItemGroup>
 
 </Project>
