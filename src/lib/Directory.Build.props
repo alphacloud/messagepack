@@ -2,12 +2,14 @@
 
   <Import Project="../Directory.Build.props" />
 
-  <!-- Add Source Link to all library packages -->
+  <!-- Common library references -->
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+    <PackageReference Include="MessagePack" Version="[2.3.85, 3.0.0)" />
   </ItemGroup>
 
 </Project>

@@ -26,9 +26,4 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup Label="Package References">
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
-    <PackageReference Include="MessagePack" Version="[2.3.85, 3.0.0)" />
-  </ItemGroup>
-
 </Project>
