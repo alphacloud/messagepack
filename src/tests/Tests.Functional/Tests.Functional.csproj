@@ -24,6 +24,10 @@
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="7.0.0-preview.4.*" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.AspNetCore.Formatters\Alphacloud.MessagePack.AspNetCore.Formatters.csproj" />
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.HttpFormatter\Alphacloud.MessagePack.HttpFormatter.csproj" />
