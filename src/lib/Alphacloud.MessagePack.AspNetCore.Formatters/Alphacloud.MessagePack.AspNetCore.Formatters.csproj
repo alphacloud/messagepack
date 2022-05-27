@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\common\AssemblyVersion.cs" Link="AssemblyVersion.cs" />
-    <Compile Include="..\Alphacloud.MessagePack.HttpFormatter\ReadableTypesCache.cs" Link="Internal\ReadableTypesCache.cs" />
+    <Compile Include="..\Alphacloud.MessagePack.HttpFormatter\Internal\SerializableTypesCache.cs" Link="SerializableTypesCache.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

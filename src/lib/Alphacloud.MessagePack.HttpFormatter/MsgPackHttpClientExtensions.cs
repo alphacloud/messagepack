@@ -1,11 +1,6 @@
 ﻿namespace Alphacloud.MessagePack.HttpFormatter
 {
-    using System;
-    using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
     using global::MessagePack.Resolvers;
-    using JetBrains.Annotations;
 
 
     /// <summary>
