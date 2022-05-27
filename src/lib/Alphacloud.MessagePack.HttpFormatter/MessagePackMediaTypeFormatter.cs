@@ -1,17 +1,9 @@
 ﻿namespace Alphacloud.MessagePack.HttpFormatter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Net;
-    using System.Net.Http;
     using System.Net.Http.Formatting;
     using System.Net.Http.Headers;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using global::MessagePack;
     using Internal;
-    using JetBrains.Annotations;
 
 
     /// <summary>
@@ -21,8 +13,9 @@
     public class MessagePackMediaTypeFormatter : MediaTypeFormatter
     {
         static readonly byte[] NilBuffer = {MessagePackCode.Nil};
-        static readonly object Lock = new object();
-        static readonly IDictionary<Type, object?> ValueTypeDefaults = new Dictionary<Type, object?>(16);
+        static readonly object Lock = new();
+        // default values can be shared between formatters
+        static Dictionary<Type, object?> _valueTypeDefaults = new(1);
 
         /// <summary>
         ///     MessagePack media type.
@@ -30,7 +23,7 @@
         [PublicAPI] public const string DefaultMediaType = "application/x-msgpack";
 
         readonly MessagePackSerializerOptions _options;
-        ReadableTypesCache _readableTypesCache;
+        readonly SerializableTypesCache _serializableTypesCache;
 
         /// <summary>
         ///     Constructor.
@@ -40,11 +33,12 @@
         /// <exception cref="T:System.ArgumentNullException">
         ///     <paramref name="options" /> or <paramref name="mediaTypes" /> is <c>null</c>.
         /// </exception>
-        public MessagePackMediaTypeFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
+        public MessagePackMediaTypeFormatter(MessagePackSerializerOptions options, IReadOnlyCollection<string> mediaTypes)
         {
             if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
+            if (mediaTypes.Count == 0) throw new ArgumentException("Collection can not be empty", nameof(mediaTypes));
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            _readableTypesCache = new ReadableTypesCache(options.Resolver);
+            _serializableTypesCache = new SerializableTypesCache(options.Resolver);
 
             foreach (var mediaType in mediaTypes)
             {
@@ -59,14 +53,14 @@
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             _options = formatter._options;
-            _readableTypesCache = formatter._readableTypesCache;
+            _serializableTypesCache = formatter._serializableTypesCache;
         }
 
         /// <inheritdoc />
         /// <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         public override bool CanReadType(Type type)
         {
-            return _readableTypesCache.CanRead(type);
+            return _serializableTypesCache.CanSerialize(type);
         }
 
         /// <inheritdoc />
@@ -125,17 +119,23 @@
             return MessagePackSerializer.SerializeAsync(type, writeStream, value, _options, cancellationToken);
         }
 
-        static object? GetDefaultForType(Type type)
+        object? GetDefaultForType(Type type)
         {
             if (!type.IsValueType) return null;
 
-            // ReSharper disable once InconsistentlySynchronizedField
-            if (ValueTypeDefaults.TryGetValue(type, out var def)) return def;
+            if (_valueTypeDefaults.TryGetValue(type, out var def)) return def;
             lock (Lock)
             {
-                if (ValueTypeDefaults.TryGetValue(type, out def)) return def;
+                if (_valueTypeDefaults.TryGetValue(type, out def)) return def;
+
                 def = Activator.CreateInstance(type);
-                ValueTypeDefaults[type] = def;
+                var newDefaults = new Dictionary<Type, object?>(_valueTypeDefaults.Count + 1);
+                foreach (var valueTypeDefault in _valueTypeDefaults)
+                {
+                    newDefaults[valueTypeDefault.Key] = valueTypeDefault.Value;
+                }
+                newDefaults[type] = def;
+                _valueTypeDefaults = newDefaults;
                 return def;
             }
         }
