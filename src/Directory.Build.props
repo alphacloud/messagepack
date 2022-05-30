@@ -1,8 +1,8 @@
 ﻿<Project>
 
   <PropertyGroup Label="Common">
-    <LibraryTargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0</LibraryTargetFrameworks>
-    <ApplicationTargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0;net6.0</ApplicationTargetFrameworks>
+    <LibraryTargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0</LibraryTargetFrameworks>
+    <ApplicationTargetFrameworks>netcoreapp3.1;net6.0;net7.0</ApplicationTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">
@@ -12,8 +12,9 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     <DebugSymbols>True</DebugSymbols>
     <DefineConstants>$(DefineConstants);JETBRAINS_ANNOTATIONS</DefineConstants>
   </PropertyGroup>
@@ -32,7 +33,7 @@
     <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>messagepack msgpack formatter alphacloud</PackageTags>
-    <PackageReleaseNotes>https://github.com/alphacloud/messagepack/milestone/12</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/alphacloud/messagepack/milestone/13</PackageReleaseNotes>
     <Authors>shatl</Authors>
     <Company>Alphacloud</Company>
     <Description>MessagePack formatters</Description>
@@ -50,12 +51,17 @@
     <TargetFrameworks>$(ApplicationTargetFrameworks)</TargetFrameworks>
     <NoWarn>$(NoWarn);CS0618;CS1591</NoWarn>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(MSBuildProjectName.Contains(Tests))' == true ">
     <TargetFrameworks>$(ApplicationTargetFrameworks)</TargetFrameworks>
     <NoWarn>$(NoWarn);CS0618;CS1591</NoWarn>
     <IsTestProject>true</IsTestProject>
     <IsPackable>False</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="JetBrains.Annotations" />
+    <Using Include="MessagePack" />
+  </ItemGroup>
 
 </Project>
