@@ -33,7 +33,7 @@
     <PackageProjectUrl>https://github.com/alphacloud/messagepack-mvc</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>messagepack msgpack formatter alphacloud</PackageTags>
-    <PackageReleaseNotes>https://github.com/alphacloud/messagepack/milestone/13</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/alphacloud/messagepack/milestone/14</PackageReleaseNotes>
     <Authors>shatl</Authors>
     <Company>Alphacloud</Company>
     <Description>MessagePack formatters</Description>
