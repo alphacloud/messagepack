@@ -22,8 +22,6 @@ issue-labels-include:
   - enhancement
   - feature
   - sample
-  - question
-  - wontfix
 
 issue-labels-exclude:
   - 0 - Backlog
@@ -46,10 +44,7 @@ issue-labels-alias:
   - name: bug
     header: Bug fixed
     plural: Bugs fixed
-  - name: dependencies
-    header: Dependency upgraded
-    plural: Dependencies upgraded
-  - name: documentation
+  - name:    documentation
     header:  Documentation
     plural:  Documentation
   - name: duplicate
@@ -64,6 +59,9 @@ issue-labels-alias:
   - name: sample
     header: Sample
     plural: Samples
+  - name: dependencies
+    header: Dependency upgraded
+    plural: Dependencies upgraded
   - name: build
     header: Build improvement
     plural: Build improvements
