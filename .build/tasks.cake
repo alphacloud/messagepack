@@ -200,13 +200,13 @@ Task("Build")
 Task("CreateNugetPackages")
     .Does<BuildInfo>(build =>
     {
-        DotNetCorePack(build.Paths.SrcDir, new DotNetCorePackSettings {
+        DotNetPack(build.Paths.SrcDir, new DotNetPackSettings {
             Configuration = build.Config,
             NoRestore = true,
             NoBuild = true,
             ArgumentCustomization = args => 
                 args.Append($"-p:Version={build.Version.NuGet}")
-                    .Append($"-p:PublishDir={build.Paths.PackagesDir}")
+                    .Append($"-p:PackageOutputPath={build.Paths.PackagesDir}")
         });
     });
 
