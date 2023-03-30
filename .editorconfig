@@ -39,3 +39,6 @@ resharper_exception_not_documented_highlighting=do_not_show
 resharper_exception_not_documented_optional_highlighting=do_not_show
 resharper_heap_view_object_allocation_evident_highlighting=do_not_show
 resharper_missing_xml_doc_highlighting=do_not_show
+
+[**/*.cs]
+resharper_local_suppression_highlighting=do_not_show

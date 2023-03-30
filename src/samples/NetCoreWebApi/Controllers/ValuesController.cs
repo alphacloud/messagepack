@@ -48,7 +48,8 @@ public class ValuesController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [FormatFilter]
-    [HttpGet("format/{id}.{format?}")]
+    [HttpGet("format/{id}")]
+    [HttpGet("format/{id}.{format}")]
     public ActionResult<TestModel> GetWithFormat(int id)
     {
         return new TestModel(id);
