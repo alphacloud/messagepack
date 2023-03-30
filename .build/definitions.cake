@@ -101,7 +101,7 @@ public class RepositoryInfo {
 public class Paths {
     public DirectoryPath RootDir { get; }
     public string SrcDir { get; set; }
-    public string ArtifactsDir {get; set; }
+    public string ArtifactsDir { get; set; }
     public string TestCoverageOutputFile { get; set; }
     public string TestCoverageReportDir { get; set; }
     public string PackagesDir { get; set; }
@@ -113,8 +113,8 @@ public class Paths {
     public Paths(ICakeContext context)
     {
         RootDir = context.MakeAbsolute(context.Directory("./"));
-        SrcDir = "./src";
-        ArtifactsDir = "./artifacts";
+        SrcDir = RootDir.Combine("src").ToString();
+        ArtifactsDir = RootDir.Combine("artifacts").ToString();
         TestCoverageOutputFile = ArtifactsDir + "/OpenCover.xml";
         TestCoverageReportDir = ArtifactsDir + "/CodeCoverageReport";
         PackagesDir = ArtifactsDir + "/packages";
