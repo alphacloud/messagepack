@@ -140,7 +140,7 @@ if you are expecting only MsgPack content, use `MsgPackHttpContentExtensions.Rea
 # Samples
 
 Sample application is located at `src/samples/NetCoreWebApi`.
-Sample Postman requests can be found at `src/samples/MessagePack.postman_collection.json`. To post MessagePack content, load use `SingleModel.msgpack` located under `src/samples`.
+Sample Postman requests can be found at `src/samples/MessagePack.postman_collection.json`. To post MessagePack content, use `SingleModel.msgpack` located under `src/samples`.
 
 
 # References
