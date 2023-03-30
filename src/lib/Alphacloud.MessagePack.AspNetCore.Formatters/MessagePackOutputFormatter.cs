@@ -34,24 +34,18 @@ public class MessagePackOutputFormatter : OutputFormatter
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
     {
         var writer = context.HttpContext.Response.BodyWriter;
-        if (context.ObjectType == typeof(object))
+        if (context.Object == null)
         {
-            if (context.Object == null)
-            {
-                var span = writer.GetSpan(1);
-                span[0] = MessagePackCode.Nil;
-                writer.Advance(1);
-            }
-            else
-            {
-                MessagePackSerializer.Serialize(context.Object.GetType(), writer, context.Object, _options, context.HttpContext.RequestAborted);
-            }
+            new MessagePackWriter(writer).WriteNil();
         }
         else
         {
-            MessagePackSerializer.Serialize(context.ObjectType, writer, context.Object, _options, context.HttpContext.RequestAborted);
-        }
+            var objectType = context.ObjectType is null || context.ObjectType == typeof(object)
+                ? context.Object.GetType()
+                : context.ObjectType;
 
+            MessagePackSerializer.Serialize(objectType, writer, context.Object, _options, context.HttpContext.RequestAborted);
+        }
         return writer.FlushAsync().AsTask();
     }
 #else
