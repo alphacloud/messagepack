@@ -43,7 +43,6 @@ Task("RunXunitTests")
         var projectFilename = build.Settings.SolutionName;
         // keep in sync with src/Directory.Build.props
         var testTargets = new KeyValuePair<string, bool>[] {
-            new KeyValuePair<string,bool>("netcoreapp3.1", true),
             new KeyValuePair<string,bool>("net6.0", true),
             new KeyValuePair<string,bool>("net7.0", true)
         };
