@@ -87,7 +87,7 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
     }
 
     [Fact]
-    public async Task CanPostUsingWebApiClient()
+    public async Task CanPostUriUsingWebApiClient()
     {
         var testModel = new TestModel(20);
         var uri = new Uri("/api/values", UriKind.Relative);
@@ -97,4 +97,39 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
         var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
         res.Should().BeEquivalentTo(testModel);
     }
+
+    [Fact]
+    public async Task CanPutUriUsingWebApiClient()
+    {
+        var testModel = new TestModel(20);
+        var uri = new Uri("/api/values", UriKind.Relative);
+
+        using var response = await _setup.Client.PutAsMsgPackAsync(uri, testModel, CancellationToken.None).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
+        res.Should().BeEquivalentTo(testModel);
+    }
+
+    [Fact]
+    public async Task CanPostStringUsingWebApiClient()
+    {
+        var testModel = new TestModel(20);
+
+        using var response = await _setup.Client.PostAsMsgPackAsync("/api/values", testModel, CancellationToken.None).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        var res = await response.Content.ReadAsMsgPackAsync<TestModel>();
+        res.Should().BeEquivalentTo(testModel);
+    }
+
+    [Fact]
+    public async Task CanPutStringUsingWebApiClient()
+    {
+        var testModel = new TestModel(20);
+
+        using var response = await _setup.Client.PutAsMsgPackAsync("/api/values", testModel, CancellationToken.None).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        var res = await response.Content.ReadAsMsgPackAsync<TestModel>();
+        res.Should().BeEquivalentTo(testModel);
+    }
+
 }
