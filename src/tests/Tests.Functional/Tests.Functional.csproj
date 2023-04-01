@@ -20,6 +20,10 @@
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="7.0.4" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.0-preview.2.23153.2" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.AspNetCore.Formatters\Alphacloud.MessagePack.AspNetCore.Formatters.csproj" />
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.HttpFormatter\Alphacloud.MessagePack.HttpFormatter.csproj" />
