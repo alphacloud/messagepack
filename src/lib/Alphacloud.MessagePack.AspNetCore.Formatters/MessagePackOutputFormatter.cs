@@ -29,7 +29,7 @@ public class MessagePackOutputFormatter : OutputFormatter
         foreach (var mediaType in mediaTypes) SupportedMediaTypes.Add(mediaType);
     }
 
-#if NET6_0 || NET7_0
+#if NET6_0 || NET7_0 || NET8_0
     /// <inheritdoc />
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
     {

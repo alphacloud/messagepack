@@ -21,9 +21,9 @@
         /// <remarks><see cref="MsgPackHttpClientExtensions.DefaultFormatter" /> is used to deserialize response.</remarks>
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <returns>A task object representing reading the content as an object of the specified type.</returns>
-        public static Task<T> ReadMsgPackAsAsync<T>(
+        public static Task<T> ReadAsMsgPackAsync<T>(
             this HttpContent content,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             return content.ReadAsAsync<T>(MsgpackOnlyFormatter, cancellationToken);
         }

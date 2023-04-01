@@ -61,8 +61,10 @@ public class ValuesController : ControllerBase
     /// <param name="value"></param>
     /// <returns></returns>
     [HttpPost]
+    [HttpPut]
     public ActionResult<TestModel> Echo([FromBody] TestModel value)
     {
         return value;
     }
+
 }

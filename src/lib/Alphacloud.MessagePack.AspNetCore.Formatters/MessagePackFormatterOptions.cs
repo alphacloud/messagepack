@@ -47,7 +47,7 @@ public class MessagePackFormatterOptions
 
     /// <summary>
     ///     Serialize using old specification.
-    ///     See <see cref="MessagePackWriter.OldSpec" /> and <see cref="MessagePackSerializerOptions.OldSpec" /> for details.
+    ///     See <see cref="MessagePackSerializerOptions.OldSpec" /> for details.
     /// </summary>
     /// <remarks>
     ///     Reading always supports both new and old specifications.

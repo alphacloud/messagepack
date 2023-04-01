@@ -1,8 +1,8 @@
 ﻿<Project>
 
   <PropertyGroup Label="Common">
-    <LibraryTargetFrameworks>netstandard2.0;net6.0;net7.0</LibraryTargetFrameworks>
-    <ApplicationTargetFrameworks>net6.0;net7.0</ApplicationTargetFrameworks>
+    <LibraryTargetFrameworks>netstandard2.0</LibraryTargetFrameworks>
+    <ApplicationTargetFrameworks>net6.0;net7.0;net8.0</ApplicationTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">
@@ -62,6 +62,10 @@
     <NoWarn>$(NoWarn);CS0618;CS1591</NoWarn>
     <IsTestProject>true</IsTestProject>
     <IsPackable>False</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
 
   <ItemGroup>
