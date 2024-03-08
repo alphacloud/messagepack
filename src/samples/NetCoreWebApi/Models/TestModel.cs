@@ -1,5 +1,4 @@
-﻿#pragma warning disable 8618
-namespace NetCoreWebApi.Models;
+﻿namespace NetCoreWebApi.Models;
 
 /// <summary>
 ///     Test model.
@@ -14,7 +13,7 @@ public class TestModel
     /// <summary>
     ///     Gets or sets model value.
     /// </summary>
-    public string Value { get; set; }
+    public string Value { get; set; } = default!;
 
     /// <summary>
     ///     Constructor.

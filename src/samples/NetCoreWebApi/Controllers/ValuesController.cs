@@ -28,7 +28,7 @@ public class ValuesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<TestModel>> Get()
     {
-        return new[] {new TestModel(1), new TestModel(2)};
+        return new[] { new TestModel(1), new TestModel(2) };
     }
 
     // GET api/values/5
@@ -66,5 +66,4 @@ public class ValuesController : ControllerBase
     {
         return value;
     }
-
 }

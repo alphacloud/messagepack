@@ -23,10 +23,13 @@ public class MessagePackOutputFormatter : OutputFormatter
     public MessagePackOutputFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
-        if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
-        if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
+        if (mediaTypes == null)
+            throw new ArgumentNullException(nameof(mediaTypes));
+        if (mediaTypes.Count == 0)
+            throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
 
-        foreach (var mediaType in mediaTypes) SupportedMediaTypes.Add(mediaType);
+        foreach (var mediaType in mediaTypes)
+            SupportedMediaTypes.Add(mediaType);
     }
 
 #if NET6_0 || NET7_0 || NET8_0
@@ -46,6 +49,7 @@ public class MessagePackOutputFormatter : OutputFormatter
 
             MessagePackSerializer.Serialize(objectType, writer, context.Object, _options, context.HttpContext.RequestAborted);
         }
+
         return writer.FlushAsync().AsTask();
     }
 #else

@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 [PublicAPI]
 public class MessagePackInputFormatter : InputFormatter
 {
-    readonly SerializableTypesCache _serializableTypesCache;
     readonly MessagePackSerializerOptions _options;
+    readonly SerializableTypesCache _serializableTypesCache;
 
     /// <summary>
     ///     Constructor.
@@ -25,8 +25,10 @@ public class MessagePackInputFormatter : InputFormatter
     public MessagePackInputFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
-        if (mediaTypes == null) throw new ArgumentNullException(nameof(mediaTypes));
-        if (mediaTypes.Count == 0) throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
+        if (mediaTypes == null)
+            throw new ArgumentNullException(nameof(mediaTypes));
+        if (mediaTypes.Count == 0)
+            throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
         _serializableTypesCache = new SerializableTypesCache(options.Resolver);
 
         foreach (var mediaType in mediaTypes)
@@ -46,10 +48,9 @@ public class MessagePackInputFormatter : InputFormatter
     }
 
     /// <inheritdoc />
-    /// <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="type" /> is <c>null</c>.</exception>
     protected override bool CanReadType(Type type)
     {
         return _serializableTypesCache.CanSerialize(type);
     }
-
 }

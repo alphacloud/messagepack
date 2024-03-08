@@ -22,7 +22,7 @@ public class MessagePackFormatterOptions
     /// <summary>
     ///     Associated media types (default <see cref="DefaultContentType" />).
     /// </summary>
-    public HashSet<string> MediaTypes { get; } = new HashSet<string> {DefaultContentType};
+    public HashSet<string> MediaTypes { get; } = new HashSet<string> { DefaultContentType };
 
     /// <summary>
     ///     Associated format mappings (default <see cref="DefaultFileExtension" />) (case-insensitive).
@@ -33,7 +33,7 @@ public class MessagePackFormatterOptions
     ///     https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-5.0#response-format-url-mappings
     ///     for further details.
     /// </remarks>
-    public HashSet<string> FileExtensions { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {DefaultFileExtension};
+    public HashSet<string> FileExtensions { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultFileExtension };
 
     /// <summary>
     ///     Formatter resolver.

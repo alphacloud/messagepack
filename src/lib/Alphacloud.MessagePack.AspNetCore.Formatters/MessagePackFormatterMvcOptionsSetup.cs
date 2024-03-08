@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 ///     Formatting options setup.
 /// </summary>
 [UsedImplicitly]
-internal class MessagePackFormatterMvcOptionsSetup : IConfigureOptions<MvcOptions>
+class MessagePackFormatterMvcOptionsSetup : IConfigureOptions<MvcOptions>
 {
     readonly IOptions<MessagePackFormatterOptions> _messagePackFormatterOptions;
 
@@ -21,16 +21,18 @@ internal class MessagePackFormatterMvcOptionsSetup : IConfigureOptions<MvcOption
 
     /// <inheritdoc />
     /// <exception cref="T:System.InvalidOperationException">No supported media types were specified.</exception>
-    /// <exception cref="T:System.ArgumentNullException"><paramref name="options"/> is <see langword="null"/></exception>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="options" /> is <see langword="null" /></exception>
     public void Configure(MvcOptions options)
     {
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        if (options == null)
+            throw new ArgumentNullException(nameof(options));
 
         var formatterOptions = _messagePackFormatterOptions.Value;
         var supportedMediaTypes = formatterOptions.MediaTypes
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .ToArray();
-        if (supportedMediaTypes.Length == 0) throw new InvalidOperationException("No supported media types were specified.");
+        if (supportedMediaTypes.Length == 0)
+            throw new InvalidOperationException("No supported media types were specified.");
 
         var msgpackOptions = MessagePackSerializerOptions.Standard;
         msgpackOptions = msgpackOptions.WithResolver(formatterOptions.FormatterResolver ?? ContractlessStandardResolver.Instance);

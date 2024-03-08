@@ -1,6 +1,5 @@
 ﻿namespace NetCoreWebApi;
 
-using Microsoft.AspNetCore.Hosting;
 using Serilog;
 
 
@@ -14,7 +13,7 @@ public class Program
     public static IHostBuilder CreateWebHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-            .UseSerilog((context, services, config) =>
+            .UseSerilog((_, _, config) =>
             {
                 config
                     .Enrich.FromLogContext()
