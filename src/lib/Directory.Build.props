@@ -16,8 +16,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-    <PackageReference Include="MessagePack" Version="[2.5.140, 3.0.0)" />
   </ItemGroup>
 
 </Project>

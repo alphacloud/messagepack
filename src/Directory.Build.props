@@ -70,6 +70,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+    <PackageReference Include="MessagePack" Version="[2.5.140, 3.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="JetBrains.Annotations" />
     <Using Include="MessagePack" />
   </ItemGroup>
