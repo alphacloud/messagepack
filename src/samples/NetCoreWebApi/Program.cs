@@ -1,6 +1,5 @@
 ﻿namespace NetCoreWebApi;
 
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
 
@@ -12,16 +11,16 @@ public class Program
         CreateWebHostBuilder(args).Build().Run();
     }
 
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+    public static IHostBuilder CreateWebHostBuilder(string[] args)
     {
-        return WebHost.CreateDefaultBuilder(args)
-            .UseSerilog((_, config) =>
+        return Host.CreateDefaultBuilder(args)
+            .UseSerilog((context, services, config) =>
             {
                 config
                     .Enrich.FromLogContext()
                     .MinimumLevel.Verbose();
                 config.WriteTo.Seq("http://localhost:5341");
             })
-            .UseStartup<Startup>();
+            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }

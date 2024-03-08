@@ -21,12 +21,12 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:49845/api/values/1",
+							"raw": "http://localhost:5030/api/values/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "49845",
+							"port": "5030",
 							"path": [
 								"api",
 								"values",
@@ -56,12 +56,12 @@
 							"file": {}
 						},
 						"url": {
-							"raw": "http://localhost:49845/api/values",
+							"raw": "http://localhost:5030/api/values",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "49845",
+							"port": "5030",
 							"path": [
 								"api",
 								"values"
@@ -84,12 +84,12 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:49845/api/values",
+							"raw": "http://localhost:5030/api/values",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "49845",
+							"port": "5030",
 							"path": [
 								"api",
 								"values"
@@ -112,12 +112,12 @@
 								],
 								"body": {},
 								"url": {
-									"raw": "http://localhost:49845/api/values",
+									"raw": "http://localhost:5030/api/values",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "49845",
+									"port": "5030",
 									"path": [
 										"api",
 										"values"
@@ -182,12 +182,12 @@
 							"raw": "{\n  \"id\": 3,\n  \"value\": \"new value: 3\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:49845/api/values",
+							"raw": "http://localhost:5030/api/values",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "49845",
+							"port": "5030",
 							"path": [
 								"api",
 								"values"
@@ -213,12 +213,12 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:49845/api/values",
+							"raw": "http://localhost:5030/api/values",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "49845",
+							"port": "5030",
 							"path": [
 								"api",
 								"values"

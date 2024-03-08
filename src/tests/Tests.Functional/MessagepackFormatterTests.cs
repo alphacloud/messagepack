@@ -1,29 +1,44 @@
 ﻿namespace Tests.Functional;
 
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using Alphacloud.MessagePack.AspNetCore.Formatters;
 using Alphacloud.MessagePack.HttpFormatter;
 using FluentAssertions;
 using MessagePack.Resolvers;
+using Microsoft.AspNetCore.Mvc.Testing;
+using NetCoreWebApi;
 using NetCoreWebApi.Models;
-using Setup;
 using Xunit;
 
 
-public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
+public class MessagePackFormatterTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    readonly TestServerSetup _setup;
+    readonly WebApplicationFactory<Program> _factory;
+    MediaTypeFormatterCollection _formatters { get; }
+    HttpClient _client { get; }
 
-    public MessagePackFormatterTests(TestServerSetup setup)
+    public MessagePackFormatterTests(WebApplicationFactory<Program> factory)
     {
-        _setup = setup ?? throw new ArgumentNullException(nameof(setup));
+        _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+
+        _client = _factory.CreateClient();
+        _client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse(MessagePackFormatterOptions.DefaultContentType));
+
+        _formatters = new MediaTypeFormatterCollection(new MediaTypeFormatter[]
+        {
+            new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Options, new[] {MessagePackMediaTypeFormatter.DefaultMediaType}),
+            new BsonMediaTypeFormatter(),
+            new JsonMediaTypeFormatter()
+        });
+
     }
 
     static async Task<T> ReadData<T>(HttpResponseMessage response)
     {
         response.EnsureSuccessStatusCode();
-        var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        var stream = await response.Content.ReadAsStreamAsync();
         var res = MessagePackSerializer.Deserialize<T>(
             stream,
             ContractlessStandardResolver.Options
@@ -36,7 +51,7 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
     [InlineData("msgpack", "application/x-msgpack")]
     public async Task CanRequestFormat(string format, string mediaType)
     {
-        var response = await _setup.Client.GetAsync(new Uri($"/api/values/format/20.{format}", UriKind.Relative));
+        var response = await _client.GetAsync(new Uri($"/api/values/format/20.{format}", UriKind.Relative));
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType!.MediaType.Should().Be(mediaType);
     }
@@ -44,7 +59,7 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
     [Fact]
     public async Task CanGet()
     {
-        var response = await _setup.Client.GetAsync(new Uri("/api/values", UriKind.Relative));
+        var response = await _client.GetAsync(new Uri("/api/values", UriKind.Relative));
         response.EnsureSuccessStatusCode();
         var res = await ReadData<IEnumerable<TestModel>>(response);
         res.Should().OnlyContain(x => x.Id == 1 || x.Id == 2);
@@ -53,10 +68,10 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
     [Fact]
     public async Task CanGetUsingWebApiClient()
     {
-        using var response = await _setup.Client.GetAsync(new Uri("/api/values", UriKind.Relative));
+        using var response = await _client.GetAsync(new Uri("/api/values", UriKind.Relative));
         response.EnsureSuccessStatusCode();
-        var res = await response.Content.ReadAsAsync<IEnumerable<TestModel>>(_setup.Formatters)
-            .ConfigureAwait(false);
+        var res = await response.Content.ReadAsAsync<IEnumerable<TestModel>>(_formatters)
+            ;
         res.Should().OnlyContain(x => x.Id == 1 || x.Id == 2);
     }
 
@@ -67,7 +82,7 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
         using var req = new HttpRequestMessage(HttpMethod.Get, new Uri("/api/values", UriKind.Relative));
         req.Headers.Accept.Clear();
         req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
-        using var response = await _setup.Client.SendAsync(req).ConfigureAwait(false);
+        using var response = await _client.SendAsync(req);
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType!.MediaType.Should().Be("application/json");
     }
@@ -81,8 +96,8 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
         req.Content = new ByteArrayContent(MessagePackSerializer.Serialize(model, ContractlessStandardResolver.Options));
         req.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(MessagePackFormatterOptions.DefaultContentType);
 
-        using var response = await _setup.Client.SendAsync(req).ConfigureAwait(false);
-        var res = await ReadData<TestModel>(response).ConfigureAwait(false);
+        using var response = await _client.SendAsync(req);
+        var res = await ReadData<TestModel>(response);
         res.Should().BeEquivalentTo(model);
     }
 
@@ -92,9 +107,9 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
         var testModel = new TestModel(20);
         var uri = new Uri("/api/values", UriKind.Relative);
 
-        using var response = await _setup.Client.PostAsMsgPackAsync(uri, testModel, CancellationToken.None).ConfigureAwait(false);
+        using var response = await _client.PostAsMsgPackAsync(uri, testModel, CancellationToken.None);
         response.EnsureSuccessStatusCode();
-        var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
+        var res = await response.Content.ReadAsAsync<TestModel>(_formatters, CancellationToken.None);
         res.Should().BeEquivalentTo(testModel);
     }
 
@@ -104,9 +119,9 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
         var testModel = new TestModel(20);
         var uri = new Uri("/api/values", UriKind.Relative);
 
-        using var response = await _setup.Client.PutAsMsgPackAsync(uri, testModel, CancellationToken.None).ConfigureAwait(false);
+        using var response = await _client.PutAsMsgPackAsync(uri, testModel, CancellationToken.None);
         response.EnsureSuccessStatusCode();
-        var res = await response.Content.ReadAsAsync<TestModel>(_setup.Formatters, CancellationToken.None);
+        var res = await response.Content.ReadAsAsync<TestModel>(_formatters, CancellationToken.None);
         res.Should().BeEquivalentTo(testModel);
     }
 
@@ -115,7 +130,7 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
     {
         var testModel = new TestModel(20);
 
-        using var response = await _setup.Client.PostAsMsgPackAsync("/api/values", testModel, CancellationToken.None).ConfigureAwait(false);
+        using var response = await _client.PostAsMsgPackAsync("/api/values", testModel, CancellationToken.None);
         response.EnsureSuccessStatusCode();
         var res = await response.Content.ReadAsMsgPackAsync<TestModel>();
         res.Should().BeEquivalentTo(testModel);
@@ -126,7 +141,7 @@ public class MessagePackFormatterTests : IClassFixture<TestServerSetup>
     {
         var testModel = new TestModel(20);
 
-        using var response = await _setup.Client.PutAsMsgPackAsync("/api/values", testModel, CancellationToken.None).ConfigureAwait(false);
+        using var response = await _client.PutAsMsgPackAsync("/api/values", testModel, CancellationToken.None);
         response.EnsureSuccessStatusCode();
         var res = await response.Content.ReadAsMsgPackAsync<TestModel>();
         res.Should().BeEquivalentTo(testModel);

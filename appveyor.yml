@@ -23,7 +23,6 @@ environment:
 install:
   - ps: dotnet tool install Cake.Tool --version 2.2.0 --global
   - ps: dotnet tool install coveralls.net --version 4.0.1 --global
-  - ps: ./dotnet-install.ps1 -Version 8.0.100-preview.2.23157.25 -InstallDir "C:\Program Files\dotnet"
 
 build_script:
   - ps: dotnet cake

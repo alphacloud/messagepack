@@ -9,7 +9,7 @@ using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using NetCoreWebApi;
-
+/*
 
 public class TestServerSetup : IDisposable
 {
@@ -44,3 +44,4 @@ public class TestServerSetup : IDisposable
         Client.Dispose();
     }
 }
+*/
