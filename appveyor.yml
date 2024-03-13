@@ -19,6 +19,13 @@ environment:
   CAKE_SETTINGS_SKIPVERIFICATION: true
   GITHUB_TOKEN:
     secure: SakrMxbclSjNzFQxv8sA35OhulfvNm9VqHBEOgQrebPaF/Bv7AmZRsT8/YEfSQED
+  CAKE_SETTINGS_ENABLESCRIPTCACHE:
+    true
+  CAKE_PATHS_CACHE:
+    c:\caches\cake
+
+cache:
+    - c:\caches\cake -> build\*.cake, appveyor.yml
 
 install:
   - ps: dotnet tool install Cake.Tool --version 4.0.0 --global
