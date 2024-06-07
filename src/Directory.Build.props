@@ -1,8 +1,8 @@
 ﻿<Project>
 
   <PropertyGroup Label="Common">
-    <LibraryTargetFrameworks>netstandard2.0</LibraryTargetFrameworks>
-    <ApplicationTargetFrameworks>net6.0;net7.0;net8.0</ApplicationTargetFrameworks>
+    <LibraryTargetFrameworks>netstandard2.0;net6.0;net8.0</LibraryTargetFrameworks>
+    <ApplicationTargetFrameworks>net6.0;net7.0;net8.0;net9.0</ApplicationTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">
@@ -71,7 +71,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-    <PackageReference Include="MessagePack" Version="[2.5.140, 3.0.0)" />
+    <PackageReference Include="MessagePack" Version="[2.5.168, 3.0.0)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,6 +30,8 @@ cache:
 install:
   - ps: dotnet tool install Cake.Tool --version 4.0.0 --global
   - ps: dotnet tool install coveralls.net --version 4.0.1 --global
+  - ps: ./dotnet-install.ps1 -Version 9.0.100-preview.4.24267.66 -InstallDir "C:\Program Files\dotnet"
+
 
 build_script:
   - ps: dotnet cake
@@ -48,7 +50,7 @@ deploy:
   - provider: NuGet
     name: Pre-release
     api_key:
-      secure: FMiBcnlKJRqHxy9ldAV73cmFcuUx7VL1QnfmpxcXc0U7schlWiSgilYlqDOo1KOu
+      secure: 1M4uTClnRdSAI28aEcpp8r0k8NosWIB7EvWe1py4G41Tam7KE8H0dkSnEf7YpCgL
     on:
       branch:
         - develop
@@ -59,6 +61,6 @@ deploy:
   - provider: NuGet
     name: Tagged release
     api_key:
-      secure: FMiBcnlKJRqHxy9ldAV73cmFcuUx7VL1QnfmpxcXc0U7schlWiSgilYlqDOo1KOu
+      secure: 1M4uTClnRdSAI28aEcpp8r0k8NosWIB7EvWe1py4G41Tam7KE8H0dkSnEf7YpCgL
     on:
       appveyor_repo_tag: true
