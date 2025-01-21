@@ -6,6 +6,7 @@ using Alphacloud.MessagePack.AspNetCore.Formatters;
 using Alphacloud.MessagePack.HttpFormatter;
 using FluentAssertions;
 using MessagePack.Resolvers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NetCoreWebApi;
 using NetCoreWebApi.Models;
@@ -126,6 +127,11 @@ public class MessagePackFormatterTests : IClassFixture<WebApplicationFactory<Pro
     public async Task CanPutStringUsingWebApiClient()
     {
         var testModel = new TestModel(20);
+
+        var bytes = MessagePackSerializer.Serialize(testModel, ContractlessStandardResolver.Options);
+        await using var file = File.Create("TestModel.msgpack");
+        file.Write(bytes);
+        file.Close();
 
         using var response = await _client.PutAsMsgPackAsync("/api/values", testModel, CancellationToken.None);
         response.EnsureSuccessStatusCode();

@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a928c5f2-6621-4251-89e9-8e59c97f9681",
+		"_postman_id": "109ded8d-3d38-48c6-9e43-3514a703d724",
 		"name": "MessagePack",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10096633"
 	},
 	"item": [
 		{
@@ -19,7 +20,6 @@
 								"description": "MessagePack format"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "http://localhost:5030/api/values/1",
 							"protocol": "http",
@@ -53,7 +53,9 @@
 						],
 						"body": {
 							"mode": "file",
-							"file": {}
+							"file": {
+								"src": "postman-cloud:///1efd8177-a397-4cd0-a286-18449572dc8a"
+							}
 						},
 						"url": {
 							"raw": "http://localhost:5030/api/values",
@@ -82,7 +84,6 @@
 								"description": "MessagePack format"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "http://localhost:5030/api/values",
 							"protocol": "http",
@@ -106,11 +107,9 @@
 									{
 										"key": "Accept",
 										"value": "application/x-msgpack",
-										"description": "MessagePack format",
-										"disabled": false
+										"description": "MessagePack format"
 									}
 								],
-								"body": {},
 								"url": {
 									"raw": "http://localhost:5030/api/values",
 									"protocol": "http",
@@ -211,7 +210,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "http://localhost:5030/api/values",
 							"protocol": "http",
