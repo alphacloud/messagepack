@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Common">
     <LibraryTargetFrameworks>netstandard2.0</LibraryTargetFrameworks>
-    <ApplicationTargetFrameworks>net6.0;net7.0;net8.0;net9.0</ApplicationTargetFrameworks>
+    <ApplicationTargetFrameworks>net8.0;net9.0</ApplicationTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">
