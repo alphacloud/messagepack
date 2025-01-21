@@ -9,10 +9,12 @@
     <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>Nullable;$(WarningsAsErrors)</WarningsAsErrors>
@@ -68,11 +70,6 @@
   <PropertyGroup>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-    <PackageReference Include="MessagePack" Version="[2.5.168, 3.0.0)" />
-  </ItemGroup>
 
   <ItemGroup>
     <Using Include="JetBrains.Annotations" />
