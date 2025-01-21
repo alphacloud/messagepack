@@ -10,14 +10,6 @@
     <Using Remove="System.Net.Http.Json" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.27" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.16" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.12" />
   </ItemGroup>
@@ -28,10 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Alphacloud.MessagePack.AspNetCore.Formatters\Alphacloud.MessagePack.AspNetCore.Formatters.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="JetBrains.Annotations" Version="2024.3.0" />
   </ItemGroup>
 
 </Project>

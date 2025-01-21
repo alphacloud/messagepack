@@ -24,9 +24,10 @@ public class MessagePackInputFormatter : InputFormatter
     /// <exception cref="T:System.ArgumentException"><paramref name="mediaTypes" /> collection is empty.</exception>
     public MessagePackInputFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
     {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-        if (mediaTypes == null)
-            throw new ArgumentNullException(nameof(mediaTypes));
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(mediaTypes);
+
+        _options = options;
         if (mediaTypes.Count == 0)
             throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
         _serializableTypesCache = new SerializableTypesCache(options.Resolver);

@@ -6,7 +6,6 @@ using Alphacloud.MessagePack.AspNetCore.Formatters;
 using Alphacloud.MessagePack.HttpFormatter;
 using FluentAssertions;
 using MessagePack.Resolvers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NetCoreWebApi;
 using NetCoreWebApi.Models;
@@ -24,12 +23,11 @@ public class MessagePackFormatterTests : IClassFixture<WebApplicationFactory<Pro
         _client = _factory.CreateClient();
         _client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse(MessagePackFormatterOptions.DefaultContentType));
 
-        _formatters = new MediaTypeFormatterCollection(new MediaTypeFormatter[]
-        {
-            new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Options, new[] { MessagePackMediaTypeFormatter.DefaultMediaType }),
+        _formatters = new MediaTypeFormatterCollection([
+            new MessagePackMediaTypeFormatter(ContractlessStandardResolver.Options, [MessagePackMediaTypeFormatter.DefaultMediaType]),
             new BsonMediaTypeFormatter(),
             new JsonMediaTypeFormatter()
-        });
+        ]);
     }
 
     MediaTypeFormatterCollection _formatters { get; }

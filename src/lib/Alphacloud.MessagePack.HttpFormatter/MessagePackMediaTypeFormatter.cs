@@ -18,7 +18,7 @@ public class MessagePackMediaTypeFormatter : MediaTypeFormatter
     [PublicAPI]
     public const string DefaultMediaType = "application/x-msgpack";
 
-    static readonly byte[] NilBuffer = { MessagePackCode.Nil };
+    static readonly byte[] NilBuffer = [MessagePackCode.Nil];
 
     static readonly object Lock = new();
 
@@ -93,7 +93,7 @@ public class MessagePackMediaTypeFormatter : MediaTypeFormatter
             throw new ArgumentNullException(nameof(content));
 
         long? contentLength = content.Headers.ContentLength;
-        if (contentLength.HasValue && contentLength.GetValueOrDefault() == 0L)
+        if (contentLength is 0L)
         {
             return GetDefaultForType(type);
         }

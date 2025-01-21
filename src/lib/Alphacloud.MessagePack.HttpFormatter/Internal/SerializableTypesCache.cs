@@ -2,16 +2,11 @@
 
 namespace Alphacloud.MessagePack.HttpFormatter.Internal;
 
-class SerializableTypesCache
+class SerializableTypesCache(IFormatterResolver formatterResolver)
 {
-    readonly IFormatterResolver _formatterResolver;
+    readonly IFormatterResolver _formatterResolver = formatterResolver ?? throw new ArgumentNullException(nameof(formatterResolver));
     readonly object _lock = new();
-    Dictionary<Type, bool> _serializableTypes = new(0);
-
-    public SerializableTypesCache(IFormatterResolver formatterResolver)
-    {
-        _formatterResolver = formatterResolver ?? throw new ArgumentNullException(nameof(formatterResolver));
-    }
+    Dictionary<Type, bool> _serializableTypes = [];
 
     /// <summary>
     ///     Check whether type is readable.

@@ -10,7 +10,7 @@ using System.Net.Http.Formatting;
 [PublicAPI]
 public static class MsgPackHttpContentExtensions
 {
-    static readonly MediaTypeFormatter[] MsgpackOnlyFormatter = { MsgPackHttpClientExtensions.DefaultFormatter };
+    static readonly MediaTypeFormatter[] MsgpackOnlyFormatter = [MsgPackHttpClientExtensions.DefaultFormatter];
 
     /// <summary>
     ///     Deserialize MsgPack response into specified type <typeparamref name="T" />.

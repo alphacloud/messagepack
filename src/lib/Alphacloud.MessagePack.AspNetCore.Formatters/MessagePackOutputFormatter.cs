@@ -22,9 +22,9 @@ public class MessagePackOutputFormatter : OutputFormatter
     /// <exception cref="T:System.ArgumentException"><paramref name="mediaTypes" /> collection is empty.</exception>
     public MessagePackOutputFormatter(MessagePackSerializerOptions options, ICollection<string> mediaTypes)
     {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-        if (mediaTypes == null)
-            throw new ArgumentNullException(nameof(mediaTypes));
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(mediaTypes);
+        _options = options;
         if (mediaTypes.Count == 0)
             throw new ArgumentException("Media type must be specified.", nameof(mediaTypes));
 
@@ -32,15 +32,13 @@ public class MessagePackOutputFormatter : OutputFormatter
             SupportedMediaTypes.Add(mediaType);
     }
 
-#if NET6_0 || NET7_0 || NET8_0 || NET9_0
+#if NET8_0 || NET9_0
     /// <inheritdoc />
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
     {
         var writer = context.HttpContext.Response.BodyWriter;
         if (context.Object == null)
-        {
             new MessagePackWriter(writer).WriteNil();
-        }
         else
         {
             var objectType = context.ObjectType is null || context.ObjectType == typeof(object)

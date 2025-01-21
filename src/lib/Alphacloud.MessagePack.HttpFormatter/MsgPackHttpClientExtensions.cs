@@ -11,9 +11,10 @@ public static class MsgPackHttpClientExtensions
     /// <summary>
     ///     Default formatter (uses <see cref="ContractlessStandardResolver" />).
     /// </summary>
-    [PublicAPI] public static readonly MessagePackMediaTypeFormatter DefaultFormatter = new MessagePackMediaTypeFormatter(
+    [PublicAPI]
+    public static readonly MessagePackMediaTypeFormatter DefaultFormatter = new(
         ContractlessStandardResolver.Options,
-        new[] { MessagePackMediaTypeFormatter.DefaultMediaType });
+        [MessagePackMediaTypeFormatter.DefaultMediaType]);
 
     /// <summary>
     ///     Sends a POST request as an asynchronous operation to the specified Uri with the given <paramref name="value" />
@@ -29,11 +30,10 @@ public static class MsgPackHttpClientExtensions
     /// <param name="value">The value that will be placed in the request's entity body.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A task object representing the asynchronous operation.</returns>
+    [MustDisposeResource]
     public static Task<HttpResponseMessage> PostAsMsgPackAsync<T>(
         this HttpClient client, Uri requestUri, T value, CancellationToken cancellationToken)
-    {
-        return client.PostAsync(requestUri, value, DefaultFormatter, cancellationToken);
-    }
+        => client.PostAsync(requestUri, value, DefaultFormatter, cancellationToken);
 
     /// <summary>
     ///     Sends a POST request as an asynchronous operation to the specified Uri with the given <paramref name="value" />
@@ -49,11 +49,10 @@ public static class MsgPackHttpClientExtensions
     /// <param name="value">The value that will be placed in the request's entity body.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A task object representing the asynchronous operation.</returns>
+    [MustDisposeResource]
     public static Task<HttpResponseMessage> PostAsMsgPackAsync<T>(
         this HttpClient client, string requestUri, T value, CancellationToken cancellationToken)
-    {
-        return client.PostAsync(requestUri, value, DefaultFormatter, cancellationToken);
-    }
+        => client.PostAsync(requestUri, value, DefaultFormatter, cancellationToken);
 
     /// <summary>
     ///     Sends a PUT request as an asynchronous operation to the specified Uri with the given <paramref name="value" />
@@ -69,11 +68,10 @@ public static class MsgPackHttpClientExtensions
     /// <param name="value">The value that will be placed in the request's entity body.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A task object representing the asynchronous operation.</returns>
+    [MustDisposeResource]
     public static Task<HttpResponseMessage> PutAsMsgPackAsync<T>(
         this HttpClient client, Uri requestUri, T value, CancellationToken cancellationToken)
-    {
-        return client.PutAsync(requestUri, value, DefaultFormatter, cancellationToken);
-    }
+        => client.PutAsync(requestUri, value, DefaultFormatter, cancellationToken);
 
     /// <summary>
     ///     Sends a PUT request as an asynchronous operation to the specified Uri with the given <paramref name="value" />
@@ -89,9 +87,8 @@ public static class MsgPackHttpClientExtensions
     /// <param name="value">The value that will be placed in the request's entity body.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A task object representing the asynchronous operation.</returns>
+    [MustDisposeResource]
     public static Task<HttpResponseMessage> PutAsMsgPackAsync<T>(
         this HttpClient client, string requestUri, T value, CancellationToken cancellationToken)
-    {
-        return client.PutAsync(requestUri, value, DefaultFormatter, cancellationToken);
-    }
+        => client.PutAsync(requestUri, value, DefaultFormatter, cancellationToken);
 }

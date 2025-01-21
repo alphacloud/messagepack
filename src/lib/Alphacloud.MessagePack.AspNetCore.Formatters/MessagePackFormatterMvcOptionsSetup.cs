@@ -9,23 +9,17 @@ using Microsoft.Extensions.Options;
 ///     Formatting options setup.
 /// </summary>
 [UsedImplicitly]
-class MessagePackFormatterMvcOptionsSetup : IConfigureOptions<MvcOptions>
+class MessagePackFormatterMvcOptionsSetup(IOptions<MessagePackFormatterOptions> messagePackFormatterOptions) : IConfigureOptions<MvcOptions>
 {
-    readonly IOptions<MessagePackFormatterOptions> _messagePackFormatterOptions;
-
-    public MessagePackFormatterMvcOptionsSetup(IOptions<MessagePackFormatterOptions> messagePackFormatterOptions)
-    {
-        _messagePackFormatterOptions = messagePackFormatterOptions ??
-            throw new ArgumentNullException(nameof(messagePackFormatterOptions));
-    }
+    readonly IOptions<MessagePackFormatterOptions> _messagePackFormatterOptions = messagePackFormatterOptions ??
+        throw new ArgumentNullException(nameof(messagePackFormatterOptions));
 
     /// <inheritdoc />
     /// <exception cref="T:System.InvalidOperationException">No supported media types were specified.</exception>
     /// <exception cref="T:System.ArgumentNullException"><paramref name="options" /> is <see langword="null" /></exception>
     public void Configure(MvcOptions options)
     {
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
 
         var formatterOptions = _messagePackFormatterOptions.Value;
         var supportedMediaTypes = formatterOptions.MediaTypes

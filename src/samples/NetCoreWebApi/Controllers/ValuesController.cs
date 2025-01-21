@@ -50,6 +50,7 @@ public class ValuesController : ControllerBase
     [FormatFilter]
     [HttpGet("format/{id}")]
     [HttpGet("format/{id}.{format}")]
+    // ReSharper disable once RouteTemplates.MethodMissingRouteParameters - by design, 'format' parameter is used to control output format.
     public ActionResult<TestModel> GetWithFormat(int id)
     {
         return new TestModel(id);
